@@ -16,7 +16,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName == 'testapi') {
-        let leagueInfo = await espn.leagueInfo("236073018");
+        let leagueInfo = await espn.leagueInfo("236073018", process.env.COOKIE_VALUE);
         let reply = league.getLeagueInfo(leagueInfo);
         await interaction.reply(reply);
     }

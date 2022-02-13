@@ -2,10 +2,10 @@ module.exports = {
 
     getLeagueInfo: function(league) {
         let msgOut = "";
-        msgout += "Teams in " + league.name;
+        msgOut += "Teams in " + league.name;
         for (var team of league.teams) {
             msgOut += "\n";
-            msgOut += team.location + " " + team.nickname + " (" + team.abbrev + ")";
+            msgOut += team.location + " " + team.name + " (" + team.abbrev + ")";
         }
         return msgOut;
     }

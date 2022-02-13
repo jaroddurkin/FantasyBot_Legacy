@@ -5,8 +5,8 @@ const ESPN_SERVICE_URL = "https://fantasy.espn.com/apis/v3/games/ffl/seasons/202
 
 module.exports = {
 
-    leagueInfo: async function(id) {
-        let response = await sendRequest(id, "");
+    leagueInfo: async function(id, cookie) {
+        let response = await sendRequest(id, "", cookie);
         let teamList = response["teams"];
         let league = new fantasy.League(id, response["settings"].name);
         for (var team of teamList) {
@@ -26,10 +26,15 @@ module.exports = {
 
 }
 
-async function sendRequest(id, settings) {
-    let res = await axios.get(ESPN_SERVICE_URL + id + settings)
+async function sendRequest(id, settings, cookie) {
+    let res = await axios.get(ESPN_SERVICE_URL + id + settings,
+        {
+            headers: {
+                Cookie: cookie
+            }
+        })
         .then(function (res) {
-            return res.body;
+            return res.data;
         })
         .catch(function (err) {
             console.log(err);
