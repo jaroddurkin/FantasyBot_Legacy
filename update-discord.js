@@ -1,15 +1,8 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
+const commands = require('./all-commands')
 
-// TODO abstract into separate JSON
-const commands = [{
-    name: 'ping',
-    description: 'Health check.'
-},
-{
-    name: 'testapi',
-    description: 'Random command to test what comes from APIs'
-}];
+const jsonCommands = commands.buildCommands();
 
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -19,12 +12,12 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
         if (process.argv.length > 2 && process.argv[2] == 'global') {
             await rest.put(
                 Routes.applicationCommands(process.env.DISCORD_CLIENT_ID),
-                { body: commands },
+                { body: jsonCommands },
             );
         } else {
             await rest.put(
                 Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_DEV_SERVER),
-                { body: commands },
+                { body: jsonCommands },
             );
         }
         console.log('Successfully refreshed commands.');

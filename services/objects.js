@@ -20,8 +20,27 @@ class Team {
         this.location = location;
         this.name = name;
         this.abbrev = abbrev;
+        this.roster = []
+    }
+
+    addPlayer(player) {
+        this.roster.push(player);
+    }
+
+    setRoster(playerList) {
+        this.roster = playerList;
     }
 
 }
 
-module.exports = {League, Team}
+class Player {
+
+    constructor(name, id, nflTeam, position) {
+        this.name = name;
+        this.id = id;
+        this.nflTeam = nflTeam;
+        this.position = position;
+    }
+}
+
+module.exports = {League, Team, Player}
