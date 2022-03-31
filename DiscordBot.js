@@ -35,7 +35,7 @@ client.on('interactionCreate', async interaction => {
             return;
         }
         let roster = await espn.roster("236073018", process.env.COOKIE_VALUE, targetTeam);
-        let reply = league.constructRoster(targetTeam, roster);
+        let reply = league.getRoster(targetTeam, roster);
         await interaction.reply(reply);
     }
 });
