@@ -8,6 +8,9 @@ module.exports = {
             new SlashCommandBuilder().setName('league').setDescription('Get the teams currently in the league.'),
             new SlashCommandBuilder().setName('roster').setDescription('Get the roster for a given team.').addStringOption(option => {
                 return option.setName('identifier').setRequired(true).setDescription("The team that you want to fetch the roster for.")
+            }),
+            new SlashCommandBuilder().setName('config').setDescription('Get current league ID or set new league ID for server.').addStringOption(option => {
+                return option.setName('league').setRequired(false).setDescription("ESPN league ID.")
             })
         ].map(command => command.toJSON());
     }
