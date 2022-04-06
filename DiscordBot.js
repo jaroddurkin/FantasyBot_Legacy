@@ -36,6 +36,11 @@ client.on('interactionCreate', async interaction => {
             }
         } else {
             let leagueId = interaction.options.get("league").value;
+            let exists = await espn.validateLeague(leagueId, process.env.COOKIE_VALUE);
+            if (!exists) {
+                await interaction.reply("League does not exist!");
+                return;
+            }
             await servers.deleteLeagueRelation(db, interaction.guildId);
             let status = await servers.setLeagueForServer(db, interaction.guildId, leagueId);
             if (!status) {
@@ -48,15 +53,22 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
+    // All commands below this line will require league anyways...
+    let leagueId = await servers.getLeagueFromServer(db, interaction.guildId);
+    if (leagueId == null) {
+        await interaction.reply("Please configure this bot using !config");
+        return;
+    }
+
     if (interaction.commandName == 'league') {
-        let leagueInfo = await espn.leagueInfo("236073018", process.env.COOKIE_VALUE);
+        let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let reply = league.getLeagueInfo(leagueInfo);
         await interaction.reply(reply);
     }
 
     if (interaction.commandName == "roster") {
         let team = interaction.options.get("identifier").value;
-        let leagueInfo = await espn.leagueInfo("236073018", process.env.COOKIE_VALUE);
+        let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let targetTeam = null;
         for (let t of leagueInfo.teams) {
             if (t.abbrev.toLowerCase() === team.toLowerCase()) {
@@ -67,7 +79,7 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply("Argument given does not match any team!");
             return;
         }
-        let roster = await espn.roster("236073018", process.env.COOKIE_VALUE, targetTeam);
+        let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
         let reply = league.getRoster(targetTeam, roster);
         await interaction.reply(reply);
     }

@@ -49,6 +49,15 @@ const ESPN_NFLTEAM_MAPS = {
 
 module.exports = {
 
+    validateLeague: async function(id, cookie) {
+        let response = await sendRequest(id, "", cookie);
+        if (Object.keys(response).length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    },
+
     leagueInfo: async function(id, cookie) {
         let response = await sendRequest(id, "", cookie);
         let teamList = response["teams"];
@@ -101,7 +110,6 @@ async function sendRequest(id, settings, cookie) {
             return res.data;
         })
         .catch(function (err) {
-            console.log(err);
             return {};
         });
     return res;
