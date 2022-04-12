@@ -11,7 +11,8 @@ module.exports = {
             }),
             new SlashCommandBuilder().setName('config').setDescription('Get current league ID or set new league ID for server.').addStringOption(option => {
                 return option.setName('league').setRequired(false).setDescription("ESPN league ID.")
-            })
+            }),
+            new SlashCommandBuilder().setName('standings').setDescription("Gets the current standings for the league.")
         ].map(command => command.toJSON());
     }
 }

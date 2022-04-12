@@ -13,6 +13,7 @@ const ESPN_POSITION_MAPS = {
 }
 
 const ESPN_NFLTEAM_MAPS = {
+    0: "FA",
     1: "ATL",
     2: "BUF",
     3: "CHI",
@@ -94,6 +95,30 @@ module.exports = {
             }
         }
         return roster;
+    },
+
+    standings: async function(id, cookie) {
+        let response = await sendRequest(id, "?view=mTeam", cookie);
+        let teams = {};
+        for (let t of response.teams) {
+            let team = new fantasy.Team(t.id, t.location, t.nickname, t.abbrev);
+            let record = {};
+            record["W"] = t["record"]["overall"]["wins"];
+            record["L"] = t["record"]["overall"]["losses"]
+            record["T"] = t["record"]["overall"]["ties"]
+            record["GB"] = t["record"]["overall"]["gamesBack"]
+            if (t["record"]["overall"]["streakType"] != null) {
+                record["streak"] = t["record"]["overall"]["streakLength"] + t["record"]["overall"]["streakType"][0];
+            } else {
+                record["streak"] = "0W";
+            }
+            record["PF"] = t["record"]["overall"]["pointsFor"];
+            record["PA"] = t["record"]["overall"]["pointsAgainst"];
+            record["seed"] = t["playoffSeed"];
+            record["fullTeam"] = team;
+            teams[t.id] = record;
+        }
+        return teams;
     }
 
 }

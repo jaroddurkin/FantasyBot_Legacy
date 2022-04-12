@@ -83,6 +83,12 @@ client.on('interactionCreate', async interaction => {
         let reply = league.getRoster(targetTeam, roster);
         await interaction.reply(reply);
     }
+
+    if (interaction.commandName == "standings") {
+        let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
+        let reply = league.getStandings(standings);
+        await interaction.reply(reply);
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
