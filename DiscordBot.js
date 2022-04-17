@@ -63,7 +63,7 @@ client.on('interactionCreate', async interaction => {
     if (interaction.commandName == 'league') {
         let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let reply = league.getLeagueInfo(leagueInfo);
-        await interaction.reply(reply);
+        await interaction.reply({ embeds: [reply] });
     }
 
     if (interaction.commandName == "roster") {
@@ -81,13 +81,13 @@ client.on('interactionCreate', async interaction => {
         }
         let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
         let reply = league.getRoster(targetTeam, roster);
-        await interaction.reply(reply);
+        await interaction.reply({ embeds: [reply] });
     }
 
     if (interaction.commandName == "standings") {
         let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
         let reply = league.getStandings(standings);
-        await interaction.reply(reply);
+        await interaction.reply({ embeds: [reply] });
     }
 });
 
