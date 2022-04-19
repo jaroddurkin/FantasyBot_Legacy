@@ -4,6 +4,10 @@
     "axios": "^0.25.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
+    "jest": "^27.5.1",
     "pg-promise": "^10.11.1"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
