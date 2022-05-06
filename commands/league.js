@@ -18,9 +18,12 @@ module.exports = {
         let msgOut = new MessageEmbed();
         msgOut.setTitle("Players currently on " + team.location + " " + team.name + " (" + team.abbrev + ")");
         for (var player of roster) {
+            value = "Position: " + player.position + "\n";
+            value += "Team: " + player.nflTeam + "\n";
+            value += "Status: " + player.injuryStatus;
             msgOut.addFields({
                 name: player.name,
-                value: player.position + ", " + player.nflTeam
+                value: value
             });
         }
         return msgOut;

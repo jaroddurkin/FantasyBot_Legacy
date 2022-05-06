@@ -13,39 +13,39 @@ const ESPN_POSITION_MAPS = {
 }
 
 const ESPN_NFLTEAM_MAPS = {
-    0: "FA",
-    1: "ATL",
-    2: "BUF",
-    3: "CHI",
-    4: "CIN",
-    5: "CLE",
-    6: "DAL",
-    7: "DEN",
-    8: "DET",
-    9: "GB",
-    10: "TEN",
-    11: "IND",
-    12: "KC",
-    13: "LV",
-    14: "LAR",
-    15: "MIA",
-    16: "MIN",
-    17: "NE",
-    18: "NO",
-    19: "NYG",
-    20: "NYJ",
-    21: "PHI",
-    22: "ARI",
-    23: "PIT",
-    24: "LAC",
-    25: "SF",
-    26: "SEA",
-    27: "TB",
-    28: "WAS",
-    29: "CAR",
-    30: "JAX",
-    33: "BAL",
-    34: "HOU"
+    0: "Free Agent (FA)",
+    1: "Falcons (ATL)",
+    2: "Bills (BUF)",
+    3: "Bears (CHI)",
+    4: "Bengals (CIN)",
+    5: "Browns (CLE)",
+    6: "Cowboys (DAL)",
+    7: "Broncos (DEN)",
+    8: "Lions (DET)",
+    9: "Packers (GB)",
+    10: "Titans (TEN)",
+    11: "Colts (IND)",
+    12: "Chiefs (KC)",
+    13: "Raiders (LV)",
+    14: "Rams (LAR)",
+    15: "Dolphins (MIA)",
+    16: "Vikings (MIN)",
+    17: "Patriots (NE)",
+    18: "Saints (NO)",
+    19: "Giants (NYG)",
+    20: "Jets (NYJ)",
+    21: "Eagles (PHI)",
+    22: "Cardinals (ARI)",
+    23: "Steelers (PIT)",
+    24: "Chargers (LAC)",
+    25: "49ers (SF)",
+    26: "Seahawks (SEA)",
+    27: "Buccaneers (TB)",
+    28: "Commanders (WAS)",
+    29: "Panthers (CAR)",
+    30: "Jaguars (JAX)",
+    33: "Ravens (BAL)",
+    34: "Texans (HOU)"
 }
 
 module.exports = {
@@ -90,7 +90,8 @@ module.exports = {
                     let playerId = player["playerId"];
                     let playerTeam = ESPN_NFLTEAM_MAPS[player["playerPoolEntry"]["player"]["proTeamId"]];
                     let playerPosition = ESPN_POSITION_MAPS[player["playerPoolEntry"]["player"]["defaultPositionId"]];
-                    roster.push(new fantasy.Player(playerName, playerId, playerTeam, playerPosition));
+                    let injuryStatus = player["playerPoolEntry"]["player"]["injuryStatus"]
+                    roster.push(new fantasy.Player(playerName, playerId, playerTeam, playerPosition, injuryStatus));
                 }
             }
         }

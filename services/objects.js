@@ -35,11 +35,12 @@ class Team {
 
 class Player {
 
-    constructor(name, id, nflTeam, position) {
+    constructor(name, id, nflTeam, position, injuryStatus) {
         this.name = name;
         this.id = id;
         this.nflTeam = nflTeam;
         this.position = position;
+        this.injuryStatus = injuryStatus;
     }
 }
 
