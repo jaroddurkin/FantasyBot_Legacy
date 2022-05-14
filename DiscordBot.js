@@ -56,7 +56,7 @@ client.on('interactionCreate', async interaction => {
     // All commands below this line will require league anyways...
     let leagueId = await servers.getLeagueFromServer(db, interaction.guildId);
     if (leagueId == null) {
-        await interaction.reply("Please configure this bot using !config");
+        await interaction.reply("Please configure this bot using /config");
         return;
     }
 
