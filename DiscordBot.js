@@ -3,7 +3,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const pgp = require('pg-promise')();
 
 const espn = require('./services/espn');
-const league = require('./commands/league');
+const messenger = require('./formatters/DiscordMessenger');
 const init_db = require('./db/init');
 const servers = require('./db/servers');
 
@@ -62,7 +62,7 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.commandName == 'league') {
         let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
-        let reply = league.getLeagueInfo(leagueInfo);
+        let reply = messenger.getLeagueInfo(leagueInfo);
         await interaction.reply({ embeds: [reply] });
     }
 
@@ -80,13 +80,13 @@ client.on('interactionCreate', async interaction => {
             return;
         }
         let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
-        let reply = league.getRoster(targetTeam, roster);
+        let reply = messenger.getRoster(targetTeam, roster);
         await interaction.reply({ embeds: [reply] });
     }
 
     if (interaction.commandName == "standings") {
         let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
-        let reply = league.getStandings(standings);
+        let reply = messenger.getStandings(standings);
         await interaction.reply({ embeds: [reply] });
     }
 });
