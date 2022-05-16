@@ -2,3 +2,4 @@
 node_modules/
 TOKEN
 CRED_*
+.DS_Store
