@@ -1,0 +1,10 @@
+version: '3'
+services:
+  DiscordBot:
+    container_name: 'fantasybot_discord'
+    image: 'fantasybot'
+    command: 'node DiscordBot.js'
+  SlackBot:
+    container_name: 'fantasybot_slack'
+    image: 'fantasybot'
+    command: 'node SlackBot.js'
