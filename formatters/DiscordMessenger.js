@@ -54,7 +54,7 @@ module.exports = {
         return msgOut;
     },
 
-    getSchedule: function(schedule) {
+    getTeamSchedule: function(schedule) {
         let msgOut = new MessageEmbed();
         msgOut.setTitle("Schedule for " + schedule[0].user.location + " " + schedule[0].user.name);
 
@@ -68,6 +68,23 @@ module.exports = {
             });
         }
 
+        return msgOut;
+    },
+
+    getWeekSchedule: function(schedule) {
+        let msgOut = new MessageEmbed();
+        msgOut.setTitle("Schedule for Game " + schedule[0].week);
+
+        for (let game of schedule) {
+            let name = `${game.away.location} ${game.away.name} vs. ${game.home.location} ${game.home.name}`;
+            let value = `Score: ${game.away.abbrev} ${game.awayPoints} - ${game.homePoints} ${game.home.abbrev}\n`;
+            value += `Winner: ${game.winner}`;
+            msgOut.addFields({
+                name: name,
+                value: value
+            });
+        }
+        
         return msgOut;
     }
 }

@@ -122,7 +122,7 @@ module.exports = {
         return teams;
     },
 
-    schedule: async function(id, cookie, givenTeam) {
+    teamSchedule: async function(id, cookie, givenTeam) {
         let league = await this.leagueInfo(id, cookie);
         let teamId = -1;
         let teamMap = {};
@@ -163,6 +163,36 @@ module.exports = {
                 gameResult = "L";
             }
             game['gameResult'] = gameResult;
+            schedule.push(game);
+        }
+        return schedule;
+    },
+
+    weekSchedule: async function(id, cookie, week) {
+        let league = await this.leagueInfo(id, cookie);
+        let teamMap = {};
+        for (let team of league.teams) {
+            teamMap[team.id] = team;
+        }
+        let response = await sendRequest(id, '?view=mMatchup', cookie);
+        let schedule = [];
+        for (let matchup of response.schedule) {
+            if (matchup['matchupPeriodId'] != week) {
+                continue;
+            }
+            let game = {};
+            game['homePoints'] = matchup['home']['totalPoints'];
+            game['awayPoints'] = matchup['away']['totalPoints'];
+            game['home'] = teamMap[matchup['home']['teamId']];
+            game['away'] = teamMap[matchup['away']['teamId']];
+            game['week'] = week;
+            if (game['homePoints'] > game['awayPoints']) {
+                game['winner'] = game['home'].abbrev;
+            } else if (game['homePoints'] == game['awayPoints']) {
+                game['winner'] = "Tie";
+            } else {
+                game['winner'] = game['away'].abbrev;
+            }
             schedule.push(game);
         }
         return schedule;

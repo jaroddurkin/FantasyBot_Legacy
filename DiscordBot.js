@@ -91,14 +91,27 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName == "schedule") {
-        let team = interaction.options.get("identifier").value;
-        let userSchedule = await espn.schedule(leagueId, process.env.COOKIE_VALUE, team);
-        if (userSchedule.length === 0) {
-            await interaction.reply("Invalid team!");
-            return;
+        let option = interaction.options.get('option').value;
+        let value = interaction.options.get('value').value;
+        if (option === "team") {
+            let userSchedule = await espn.teamSchedule(leagueId, process.env.COOKIE_VALUE, value);
+            if (userSchedule.length === 0) {
+                await interaction.reply("Invalid team!");
+                return;
+            }
+            let reply = messenger.getTeamSchedule(userSchedule);
+            await interaction.reply({ embeds: [reply] });
+        } else if (option === "week") {
+            let weekSchedule = await espn.weekSchedule(leagueId, process.env.COOKIE_VALUE, value);
+            if (weekSchedule.length === 0) {
+                await interaction.reply("Invalid week!");
+                return;
+            }
+            let reply = messenger.getWeekSchedule(weekSchedule);
+            await interaction.reply({ embeds: [reply] });
+        } else {
+            await interaction.reply("Invalid option!");
         }
-        let reply = messenger.getSchedule(userSchedule);
-        await interaction.reply({ embeds: [reply] });
     }
 });
 
