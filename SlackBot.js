@@ -101,6 +101,41 @@ app.command("/standings", async ({command, ack, say}) => {
     await say(reply);
 });
 
+app.command("/schedule", async ({command, ack, say}) => {
+    await ack();
+    let options = command.text.split(" ");
+    if (options.length != 2) {
+        await say("Invalid arguments for command!");
+        return;
+    }
+
+    let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
+    if (leagueId == null) {
+        await say("Please configure this bot using /config");
+        return;
+    }
+
+    if (options[0] == "team") {
+        let userSchedule = await espn.teamSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
+        if (userSchedule.length === 0) {
+            await say("Invalid team!");
+            return;
+        }
+        let reply = messenger.getTeamSchedule(userSchedule);
+        await say(reply);
+    } else if (options[0] == "week") {
+        let weekSchedule = await espn.weekSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
+        if (weekSchedule.length === 0) {
+            await say("Invalid week!");
+            return;
+        }
+        let reply = messenger.getWeekSchedule(weekSchedule);
+        await say(reply);
+    } else {
+        await say("Invalid option!");
+    }
+});
+
 (async () => {
     await app.start();
     console.log("App running!");

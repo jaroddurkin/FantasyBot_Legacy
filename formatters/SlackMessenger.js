@@ -45,6 +45,35 @@ module.exports = {
             msgOut.blocks.push(createSection(line));
         }
         return msgOut;
+    },
+
+    getTeamSchedule: function(schedule) {
+        let msgOut = { "blocks": [] };
+        msgOut.blocks.push(createSection(`*Schedule for ${schedule[0].user.location} ${schedule[0].user.name}*`));
+
+        for (let game of schedule) {
+            let text = `*Game ${game.gameNumber}*\n`;
+            text += `${game.opponent.location} ${game.opponent.name} (${game.opponent.abbrev})\n`
+            text += `Score: ${game.userPoints} - ${game.oppPoints}\n`;
+            text += `Result: ${game.gameResult}`;
+            msgOut.blocks.push(createSection(text));
+        };
+
+        return msgOut;
+    },
+
+    getWeekSchedule: function(schedule) {
+        let msgOut = { "blocks": [] };
+        msgOut.blocks.push(createSection(`*Schedule for Game ${schedule[0].week}*`));
+
+        for (let game of schedule) {
+            let text = `*${game.away.location} ${game.away.name} vs. ${game.home.location} ${game.home.name}*\n`;
+            text += `Score: ${game.away.abbrev} ${game.awayPoints} - ${game.homePoints} ${game.home.abbrev}\n`;
+            text += `Winner: ${game.winner}`;
+            msgOut.blocks.push(createSection(text));
+        }
+
+        return msgOut;
     }
 }
 
