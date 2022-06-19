@@ -120,6 +120,52 @@ module.exports = {
             teams[t.id] = record;
         }
         return teams;
+    },
+
+    schedule: async function(id, cookie, givenTeam) {
+        let league = await this.leagueInfo(id, cookie);
+        let teamId = -1;
+        let teamMap = {};
+        for (let team of league.teams) {
+            if (team.abbrev.toLowerCase() == givenTeam.toLowerCase()) {
+                teamId = team.id;
+            }
+            teamMap[team.id] = team;
+        }
+        let response = await sendRequest(id, '?view=mMatchup', cookie);
+        let schedule = [];
+        for (let matchup of response.schedule) {
+            let userPoints, oppPoints, opponent;
+            let gameNumber = matchup['matchupPeriodId'];
+            if (matchup['home']['teamId'] === teamId) {
+                userPoints = matchup['home']['totalPoints'];
+                oppPoints = matchup['away']['totalPoints'];
+                opponent = teamMap[matchup['away']['teamId']];
+            } else if (matchup['away']['teamId'] === teamId) {
+                userPoints = matchup['away']['totalPoints'];
+                oppPoints = matchup['home']['totalPoints'];
+                opponent = teamMap[matchup['home']['teamId']];
+            } else {
+                continue;
+            }
+            let game = {};
+            game['userPoints'] = userPoints;
+            game['oppPoints'] = oppPoints;
+            game['user'] = teamMap[teamId];
+            game['opponent'] = opponent;
+            game['gameNumber'] = gameNumber;
+            let gameResult;
+            if (userPoints > oppPoints) {
+                gameResult = "W";
+            } else if (userPoints === oppPoints) {
+                gameResult = "T";
+            } else {
+                gameResult = "L";
+            }
+            game['gameResult'] = gameResult;
+            schedule.push(game);
+        }
+        return schedule;
     }
 
 }

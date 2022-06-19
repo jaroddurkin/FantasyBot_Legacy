@@ -52,5 +52,22 @@ module.exports = {
             msgOut.addFields(line);
         }
         return msgOut;
+    },
+
+    getSchedule: function(schedule) {
+        let msgOut = new MessageEmbed();
+        msgOut.setTitle("Schedule for " + schedule[0].user.location + " " + schedule[0].user.name);
+
+        for (let game of schedule) {
+            let value = game.opponent.location + " " + game.opponent.name + " (" + game.opponent.abbrev + ")\n";
+            value += "Score: " + game.userPoints + " - " + game.oppPoints + "\n";
+            value += "Result: " + game.gameResult; 
+            msgOut.addFields({
+                name: "Game " + game.gameNumber,
+                value: value
+            });
+        }
+
+        return msgOut;
     }
 }

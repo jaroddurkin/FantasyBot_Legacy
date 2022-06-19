@@ -89,6 +89,17 @@ client.on('interactionCreate', async interaction => {
         let reply = messenger.getStandings(standings);
         await interaction.reply({ embeds: [reply] });
     }
+
+    if (interaction.commandName == "schedule") {
+        let team = interaction.options.get("identifier").value;
+        let userSchedule = await espn.schedule(leagueId, process.env.COOKIE_VALUE, team);
+        if (userSchedule.length === 0) {
+            await interaction.reply("Invalid team!");
+            return;
+        }
+        let reply = messenger.getSchedule(userSchedule);
+        await interaction.reply({ embeds: [reply] });
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);

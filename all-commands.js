@@ -12,7 +12,10 @@ module.exports = {
             new SlashCommandBuilder().setName('config').setDescription('Get current league ID or set new league ID for server.').addStringOption(option => {
                 return option.setName('league').setRequired(false).setDescription("ESPN league ID.")
             }),
-            new SlashCommandBuilder().setName('standings').setDescription("Gets the current standings for the league.")
+            new SlashCommandBuilder().setName('standings').setDescription("Gets the current standings for the league."),
+            new SlashCommandBuilder().setName('schedule').setDescription("Prints the schedule for a given team.").addStringOption(option => {
+                return option.setName('identifier').setRequired(true).setDescription("The team that you want the schedule for.")
+            })
         ].map(command => command.toJSON());
     }
 }
