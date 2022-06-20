@@ -90,7 +90,13 @@ module.exports = {
                     let playerId = player["playerId"];
                     let playerTeam = ESPN_NFLTEAM_MAPS[player["playerPoolEntry"]["player"]["proTeamId"]];
                     let playerPosition = ESPN_POSITION_MAPS[player["playerPoolEntry"]["player"]["defaultPositionId"]];
-                    let injuryStatus = player["playerPoolEntry"]["player"]["injuryStatus"]
+                    let injuryStatus;
+                    if (playerPosition === "D/ST") {
+                        injuryStatus = "N/A";
+                    } else {
+                        let status = player["playerPoolEntry"]["player"]["injuryStatus"];
+                        injuryStatus = status[0] + status.slice(1).toLowerCase();
+                    }
                     roster.push(new fantasy.Player(playerName, playerId, playerTeam, playerPosition, injuryStatus));
                 }
             }
@@ -113,8 +119,8 @@ module.exports = {
             } else {
                 record["streak"] = "0W";
             }
-            record["PF"] = t["record"]["overall"]["pointsFor"];
-            record["PA"] = t["record"]["overall"]["pointsAgainst"];
+            record["PF"] = t["record"]["overall"]["pointsFor"].toFixed(2);
+            record["PA"] = t["record"]["overall"]["pointsAgainst"].toFixed(2);
             record["seed"] = t["playoffSeed"];
             record["fullTeam"] = team;
             teams[t.id] = record;
