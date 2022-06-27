@@ -70,19 +70,11 @@ module.exports = {
         return league;
     },
 
-    leagueSettings: async function(id) {
-        let response = await sendRequest(id, '?view=mSettings');
-    },
-
-    matchups: async function(id) {
-        let response = await sendRequest(id, '?view=mMatchup');
-    },
-
     roster: async function(id, cookie, team) {
         let response = await sendRequest(id, '?view=mRoster', cookie);
         let roster = [];
         for (let t of response.teams) {
-            if (t['id'] != team.id) {
+            if (t['id'] !== team.id) {
                 continue;
             } else {
                 for (let player of t.roster.entries) {
@@ -114,7 +106,7 @@ module.exports = {
             record['L'] = t['record']['overall']['losses']
             record['T'] = t['record']['overall']['ties']
             record['GB'] = t['record']['overall']['gamesBack']
-            if (t['record']['overall']['streakType'] != null) {
+            if (t['record']['overall']['streakType'] !== null) {
                 record['streak'] = t['record']['overall']['streakLength'] + t['record']['overall']['streakType'][0];
             } else {
                 record['streak'] = '0W';
@@ -133,7 +125,7 @@ module.exports = {
         let teamId = -1;
         let teamMap = {};
         for (let team of league.teams) {
-            if (team.abbrev.toLowerCase() == givenTeam.toLowerCase()) {
+            if (team.abbrev.toLowerCase() === givenTeam.toLowerCase()) {
                 teamId = team.id;
             }
             teamMap[team.id] = team;
@@ -183,7 +175,7 @@ module.exports = {
         let response = await sendRequest(id, '?view=mMatchup', cookie);
         let schedule = [];
         for (let matchup of response.schedule) {
-            if (matchup['matchupPeriodId'] != week) {
+            if (matchup['matchupPeriodId'].toString() !== week) {
                 continue;
             }
             let game = {};

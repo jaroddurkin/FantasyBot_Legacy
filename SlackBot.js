@@ -23,16 +23,14 @@ app.command('/ping', async ({command, ack, say}) => {
     await say('Pong!');
 });
 
-app.command("/config", async ({command, ack, say}) => {
+app.command('/config', async ({command, ack, say}) => {
     await ack();
     if (command.text.length === 0) {
         let league = await servers.getLeagueFromServer(db, command.channel_id);
-        if (league != null) {
+        if (league !== null) {
             await say(`League ID currently configured: ${league}`);
-            return;
         } else {
             await say('League not configured!');
-            return;
         }
     } else {
         let leagueId = command.text;
@@ -45,30 +43,30 @@ app.command("/config", async ({command, ack, say}) => {
         let status = await servers.setLeagueForServer(db, command.channel_id, leagueId);
         if (!status) {
             await say('Server does not exist!');
-            return;
         } else {
             await say('League ID set!');
-            return;
         }
     }
+    return;
 });
 
 app.command('/league', async ({command, ack, say}) => {
     await ack();
     let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId == null) {
+    if (leagueId === null) {
         await say('Please configure this bot using /config');
         return;
     }
     let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
     let reply = messenger.getLeagueInfo(leagueInfo);
     await say(reply);
+    return;
 });
 
 app.command('/roster', async ({command, ack, say}) => {
     await ack();
     let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId == null) {
+    if (leagueId === null) {
         await say('Please configure this bot using /config');
         return;
     }
@@ -87,12 +85,13 @@ app.command('/roster', async ({command, ack, say}) => {
     let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
     let reply = messenger.getRoster(targetTeam, roster);
     await say(reply);
+    return;
 });
 
 app.command('/standings', async ({command, ack, say}) => {
     await ack();
     let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId == null) {
+    if (leagueId === null) {
         await say('Please configure this bot using /config');
         return;
     }
@@ -110,12 +109,12 @@ app.command('/schedule', async ({command, ack, say}) => {
     }
 
     let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId == null) {
+    if (leagueId === null) {
         await say('Please configure this bot using /config');
         return;
     }
 
-    if (options[0] == 'team') {
+    if (options[0].toLowerCase() == 'team') {
         let userSchedule = await espn.teamSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
         if (userSchedule.length === 0) {
             await say('Invalid team!');
@@ -123,7 +122,7 @@ app.command('/schedule', async ({command, ack, say}) => {
         }
         let reply = messenger.getTeamSchedule(userSchedule);
         await say(reply);
-    } else if (options[0] == 'week') {
+    } else if (options[0].toLowerCase() == 'week') {
         let weekSchedule = await espn.weekSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
         if (weekSchedule.length === 0) {
             await say('Invalid week!');
@@ -134,6 +133,7 @@ app.command('/schedule', async ({command, ack, say}) => {
     } else {
         await say('Invalid option!');
     }
+    return;
 });
 
 (async () => {

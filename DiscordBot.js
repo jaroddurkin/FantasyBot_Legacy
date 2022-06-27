@@ -20,14 +20,14 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
-    if (interaction.commandName == 'ping') {
+    if (interaction.commandName.toLowerCase() === 'ping') {
         await interaction.reply('pong!');
     }
 
-    if (interaction.commandName == 'config') {
-        if (interaction.options.get('league') == null) {
+    if (interaction.commandName.toLowerCase() === 'config') {
+        if (interaction.options.get('league') === null) {
             let league = await servers.getLeagueFromServer(db, interaction.guildId);
-            if (league != null) {
+            if (league !== null) {
                 await interaction.reply(`League ID currently configured: ${league}`);
                 return;
             } else {
@@ -55,18 +55,18 @@ client.on('interactionCreate', async interaction => {
 
     // All commands below this line will require league anyways...
     let leagueId = await servers.getLeagueFromServer(db, interaction.guildId);
-    if (leagueId == null) {
+    if (leagueId === null) {
         await interaction.reply('Please configure this bot using /config');
         return;
     }
 
-    if (interaction.commandName == 'league') {
+    if (interaction.commandName.toLowerCase() === 'league') {
         let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let reply = messenger.getLeagueInfo(leagueInfo);
         await interaction.reply({ embeds: [reply] });
     }
 
-    if (interaction.commandName == 'roster') {
+    if (interaction.commandName.toLowerCase() === 'roster') {
         let team = interaction.options.get('identifier').value;
         let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let targetTeam = null;
@@ -84,16 +84,16 @@ client.on('interactionCreate', async interaction => {
         await interaction.reply({ embeds: [reply] });
     }
 
-    if (interaction.commandName == 'standings') {
+    if (interaction.commandName.toLowerCase() === 'standings') {
         let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
         let reply = messenger.getStandings(standings);
         await interaction.reply({ embeds: [reply] });
     }
 
-    if (interaction.commandName == 'schedule') {
+    if (interaction.commandName.toLowerCase() === 'schedule') {
         let option = interaction.options.get('option').value;
         let value = interaction.options.get('value').value;
-        if (option === 'team') {
+        if (option.toLowerCase() === 'team') {
             let userSchedule = await espn.teamSchedule(leagueId, process.env.COOKIE_VALUE, value);
             if (userSchedule.length === 0) {
                 await interaction.reply('Invalid team!');
@@ -101,7 +101,7 @@ client.on('interactionCreate', async interaction => {
             }
             let reply = messenger.getTeamSchedule(userSchedule);
             await interaction.reply({ embeds: [reply] });
-        } else if (option === 'week') {
+        } else if (option.toLowerCase() === 'week') {
             let weekSchedule = await espn.weekSchedule(leagueId, process.env.COOKIE_VALUE, value);
             if (weekSchedule.length === 0) {
                 await interaction.reply('Invalid week!');
