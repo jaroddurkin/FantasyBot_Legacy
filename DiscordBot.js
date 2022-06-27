@@ -22,6 +22,7 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.commandName.toLowerCase() === 'ping') {
         await interaction.reply('pong!');
+        return;
     }
 
     if (interaction.commandName.toLowerCase() === 'config') {
@@ -29,10 +30,8 @@ client.on('interactionCreate', async interaction => {
             let league = await servers.getLeagueFromServer(db, interaction.guildId);
             if (league !== null) {
                 await interaction.reply(`League ID currently configured: ${league}`);
-                return;
             } else {
                 await interaction.reply('League not configured!');
-                return;
             }
         } else {
             let leagueId = interaction.options.get('league').value;
@@ -45,12 +44,11 @@ client.on('interactionCreate', async interaction => {
             let status = await servers.setLeagueForServer(db, interaction.guildId, leagueId);
             if (!status) {
                 await interaction.reply('Server does not exist!');
-                return;
             } else {
                 await interaction.reply('League ID set!');
-                return;
             }
         }
+        return;
     }
 
     // All commands below this line will require league anyways...
@@ -64,6 +62,7 @@ client.on('interactionCreate', async interaction => {
         let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
         let reply = messenger.getLeagueInfo(leagueInfo);
         await interaction.reply({ embeds: [reply] });
+        return;
     }
 
     if (interaction.commandName.toLowerCase() === 'roster') {
@@ -82,12 +81,14 @@ client.on('interactionCreate', async interaction => {
         let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
         let reply = messenger.getRoster(targetTeam, roster);
         await interaction.reply({ embeds: [reply] });
+        return;
     }
 
     if (interaction.commandName.toLowerCase() === 'standings') {
         let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
         let reply = messenger.getStandings(standings);
         await interaction.reply({ embeds: [reply] });
+        return;
     }
 
     if (interaction.commandName.toLowerCase() === 'schedule') {
@@ -112,6 +113,7 @@ client.on('interactionCreate', async interaction => {
         } else {
             await interaction.reply('Invalid option!');
         }
+        return;
     }
 });
 
