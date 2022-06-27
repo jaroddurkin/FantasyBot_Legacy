@@ -20,7 +20,7 @@ class Team {
         this.location = location;
         this.name = name;
         this.abbrev = abbrev;
-        this.roster = []
+        this.roster = [];
     }
 
     addPlayer(player) {
@@ -44,4 +44,4 @@ class Player {
     }
 }
 
-module.exports = {League, Team, Player}
+module.exports = {League, Team, Player};
