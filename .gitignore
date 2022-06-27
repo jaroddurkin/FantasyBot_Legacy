@@ -3,3 +3,4 @@ node_modules/
 TOKEN
 CRED_*
 .DS_Store
+db/dev_db.bash
