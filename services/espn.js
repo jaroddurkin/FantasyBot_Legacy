@@ -50,8 +50,8 @@ const ESPN_NFLTEAM_MAPS = {
 
 module.exports = {
 
-    validateLeague: async function(id, cookie) {
-        let response = await sendRequest(id, '', cookie);
+    validateLeague: async function(id, config) {
+        let response = await sendRequest(id, '', config);
         if (Object.keys(response).length === 0) {
             return false;
         } else {
@@ -59,8 +59,8 @@ module.exports = {
         }
     },
 
-    leagueInfo: async function(id, cookie) {
-        let response = await sendRequest(id, '', cookie);
+    leagueInfo: async function(id, config) {
+        let response = await sendRequest(id, '', config);
         let teamList = response['teams'];
         let league = new fantasy.League(id, response['settings'].name);
         for (var team of teamList) {
@@ -70,8 +70,8 @@ module.exports = {
         return league;
     },
 
-    roster: async function(id, cookie, team) {
-        let response = await sendRequest(id, '?view=mRoster', cookie);
+    roster: async function(id, config, team) {
+        let response = await sendRequest(id, '?view=mRoster', config);
         let roster = [];
         for (let t of response.teams) {
             if (t['id'] !== team.id) {
@@ -96,8 +96,8 @@ module.exports = {
         return roster;
     },
 
-    standings: async function(id, cookie) {
-        let response = await sendRequest(id, '?view=mTeam', cookie);
+    standings: async function(id, config) {
+        let response = await sendRequest(id, '?view=mTeam', config);
         let teams = {};
         for (let t of response.teams) {
             let team = new fantasy.Team(t.id, t.location, t.nickname, t.abbrev);
@@ -120,8 +120,8 @@ module.exports = {
         return teams;
     },
 
-    teamSchedule: async function(id, cookie, givenTeam) {
-        let league = await this.leagueInfo(id, cookie);
+    teamSchedule: async function(id, config, givenTeam) {
+        let league = await this.leagueInfo(id, config);
         let teamId = -1;
         let teamMap = {};
         for (let team of league.teams) {
@@ -130,7 +130,7 @@ module.exports = {
             }
             teamMap[team.id] = team;
         }
-        let response = await sendRequest(id, '?view=mMatchup', cookie);
+        let response = await sendRequest(id, '?view=mMatchup', config);
         let schedule = [];
         for (let matchup of response.schedule) {
             let userPoints, oppPoints, opponent;
@@ -166,13 +166,13 @@ module.exports = {
         return schedule;
     },
 
-    weekSchedule: async function(id, cookie, week) {
-        let league = await this.leagueInfo(id, cookie);
+    weekSchedule: async function(id, config, week) {
+        let league = await this.leagueInfo(id, config);
         let teamMap = {};
         for (let team of league.teams) {
             teamMap[team.id] = team;
         }
-        let response = await sendRequest(id, '?view=mMatchup', cookie);
+        let response = await sendRequest(id, '?view=mMatchup', config);
         let schedule = [];
         for (let matchup of response.schedule) {
             if (matchup['matchupPeriodId'].toString() !== week) {
@@ -198,14 +198,15 @@ module.exports = {
 
 };
 
-async function sendRequest(id, settings, cookie) {
-    let res = await axios.get(ESPN_SERVICE_URL + id + settings,
-        {
-            headers: {
-                Cookie: cookie
-            },
-            withCredentials: true
-        })
+async function sendRequest(id, settings, config) {
+    let apiConfig = {};
+    if (config.cookie.length !== 0) {
+        apiConfig['headers'] = {
+            Cookie: config.cookie
+        };
+        apiConfig['withCredentials'] = true;
+    }
+    let res = await axios.get(ESPN_SERVICE_URL + id + settings, apiConfig)
         .then(function (res) {
             return res.data;
         })

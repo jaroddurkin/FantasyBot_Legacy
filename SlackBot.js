@@ -12,6 +12,10 @@ if (!init_db.createTablesIfNotExist(db)) {
     process.exit(1);
 }
 
+const apiConfiguration = {
+    cookie: process.env.COOKIE_VALUE ? process.env.COOKIE_VALUE : ""
+};
+
 const app = new App({
     token: process.env.SLACK_TOKEN,
     appToken: process.env.SLACK_APPTOKEN,
@@ -34,7 +38,7 @@ app.command('/config', async ({command, ack, say}) => {
         }
     } else {
         let leagueId = command.text;
-        let exists = await espn.validateLeague(leagueId, process.env.COOKIE_VALUE);
+        let exists = await espn.validateLeague(leagueId, apiConfiguration);
         if (!exists) {
             await say('League does not exist!');
             return;
@@ -57,7 +61,7 @@ app.command('/league', async ({command, ack, say}) => {
         await say('Please configure this bot using /config');
         return;
     }
-    let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
+    let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
     let reply = messenger.getLeagueInfo(leagueInfo);
     await say(reply);
     return;
@@ -71,7 +75,7 @@ app.command('/roster', async ({command, ack, say}) => {
         return;
     }
     let team = command.text;
-    let leagueInfo = await espn.leagueInfo(leagueId, process.env.COOKIE_VALUE);
+    let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
     let targetTeam = null;
     for (let t of leagueInfo.teams) {
         if (t.abbrev.toLowerCase() === team.toLowerCase()) {
@@ -82,7 +86,7 @@ app.command('/roster', async ({command, ack, say}) => {
         await say('Argument given does not match any team!');
         return;
     }
-    let roster = await espn.roster(leagueId, process.env.COOKIE_VALUE, targetTeam);
+    let roster = await espn.roster(leagueId, apiConfiguration, targetTeam);
     let reply = messenger.getRoster(targetTeam, roster);
     await say(reply);
     return;
@@ -95,7 +99,7 @@ app.command('/standings', async ({command, ack, say}) => {
         await say('Please configure this bot using /config');
         return;
     }
-    let standings = await espn.standings(leagueId, process.env.COOKIE_VALUE);
+    let standings = await espn.standings(leagueId, apiConfiguration);
     let reply = messenger.getStandings(standings);
     await say(reply);
 });
@@ -115,7 +119,7 @@ app.command('/schedule', async ({command, ack, say}) => {
     }
 
     if (options[0].toLowerCase() == 'team') {
-        let userSchedule = await espn.teamSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
+        let userSchedule = await espn.teamSchedule(leagueId, apiConfiguration, options[1]);
         if (userSchedule.length === 0) {
             await say('Invalid team!');
             return;
@@ -123,7 +127,7 @@ app.command('/schedule', async ({command, ack, say}) => {
         let reply = messenger.getTeamSchedule(userSchedule);
         await say(reply);
     } else if (options[0].toLowerCase() == 'week') {
-        let weekSchedule = await espn.weekSchedule(leagueId, process.env.COOKIE_VALUE, options[1]);
+        let weekSchedule = await espn.weekSchedule(leagueId, apiConfiguration, options[1]);
         if (weekSchedule.length === 0) {
             await say('Invalid week!');
             return;
