@@ -12,6 +12,7 @@ if (!init_db.createTablesIfNotExist(db)) {
     process.exit(1);
 }
 
+// support for ESPN private leagues
 const apiConfiguration = {
     cookie: process.env.COOKIE_VALUE ? process.env.COOKIE_VALUE : ""
 };
@@ -76,6 +77,8 @@ app.command('/roster', async ({command, ack, say}) => {
     }
     let team = command.text;
     let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
+
+    // check if team actually exists
     let targetTeam = null;
     for (let t of leagueInfo.teams) {
         if (t.abbrev.toLowerCase() === team.toLowerCase()) {
@@ -86,6 +89,7 @@ app.command('/roster', async ({command, ack, say}) => {
         await say('Argument given does not match any team!');
         return;
     }
+
     let roster = await espn.roster(leagueId, apiConfiguration, targetTeam);
     let reply = messenger.getRoster(targetTeam, roster);
     await say(reply);
@@ -118,6 +122,7 @@ app.command('/schedule', async ({command, ack, say}) => {
         return;
     }
 
+    // manual argument validation (two options: 'team' and 'week')
     if (options[0].toLowerCase() == 'team') {
         let userSchedule = await espn.teamSchedule(leagueId, apiConfiguration, options[1]);
         if (userSchedule.length === 0) {

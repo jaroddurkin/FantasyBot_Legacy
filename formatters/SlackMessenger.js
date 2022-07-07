@@ -28,6 +28,7 @@ module.exports = {
         let msgOut = { 'blocks': [] };
         msgOut.blocks.push(createSection('*Current Standings*'));
         
+        // team list from API is not automatically sorted, so we fill based on seed during loop
         let sort = Array(Object.keys(standings).length).fill(null);
         for (let team in standings) {
             let record = standings[team];
@@ -77,6 +78,7 @@ module.exports = {
     }
 }
 
+// slack messaging API works in blocks, this will return a JSON structure with the text we want inside it
 function createSection(text) {
     return {
         'type': 'section',

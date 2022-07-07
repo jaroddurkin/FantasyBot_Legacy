@@ -13,6 +13,7 @@ if (!init_db.createTablesIfNotExist(db)) {
     process.exit(1);
 }
 
+// support for ESPN private leagues
 const apiConfiguration = {
     cookie: process.env.COOKIE_VALUE ? process.env.COOKIE_VALUE : ""
 };
@@ -73,6 +74,8 @@ client.on('interactionCreate', async interaction => {
         let team = interaction.options.get('identifier').value;
         let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
         let targetTeam = null;
+
+        // check if team exists before continuing
         for (let t of leagueInfo.teams) {
             if (t.abbrev.toLowerCase() === team.toLowerCase()) {
                 targetTeam = t
@@ -82,6 +85,7 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply('Argument given does not match any team!');
             return;
         }
+
         let roster = await espn.roster(leagueId, apiConfiguration, targetTeam);
         let reply = messenger.getRoster(targetTeam, roster);
         await interaction.reply({ embeds: [reply] });
@@ -98,6 +102,7 @@ client.on('interactionCreate', async interaction => {
     if (interaction.commandName.toLowerCase() === 'schedule') {
         let option = interaction.options.get('option').value;
         let value = interaction.options.get('value').value;
+        // manual argument validation (two options: 'team' and 'week')
         if (option.toLowerCase() === 'team') {
             let userSchedule = await espn.teamSchedule(leagueId, apiConfiguration, value);
             if (userSchedule.length === 0) {

@@ -33,6 +33,7 @@ module.exports = {
         let msgOut = new MessageEmbed();
         msgOut.setTitle('Current standings');
         
+        // team list from API is not automatically sorted, so we fill based on seed during loop
         let sort = Array(Object.keys(standings).length).fill(null);
         for (let team in standings) {
             let record = standings[team];
