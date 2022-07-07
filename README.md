@@ -23,8 +23,6 @@
   </p>
 </div>
 
-
-<!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -50,8 +48,6 @@
   </ol>
 </details>
 
-
-
 ## About The Project
 
 [![product-screenshot]](./img/readme_about.png)
@@ -62,7 +58,7 @@ Information such as records, playoff seeding, current scores, and rosters are al
 
 Two options to use this app, you can use the publicly hosted application (join links also coming soon), or there are instructions below to self-host the app.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ### Built With
 
@@ -74,13 +70,13 @@ Two options to use this app, you can use the publicly hosted application (join l
 * [Jest](https://jestjs.io/)
 * [Axios](https://axios-http.com/)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ## Public Bot
 
 Public links for both the Discord Bot and the Slack Bot will be ready in a future release. For usage now, feel free to self-host the bot(s).
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ## Self-Hosting
 
@@ -108,11 +104,11 @@ Feel free to self-host this bot, in case you would like your own support for pri
 1. Create a [Discord Bot](https://discord.com/developers/docs/intro) or a [Slack Bot](https://api.slack.com/tools/slack-developer-tools)
 2. Copy Discord Bot Token + Client ID, and Slack Token + App Token into environment variables shown as in `dev.bash`.
 3. Run Postgres database somewhere and store the connection URL in the proper environment variable.
-4. (Optional) Store your ESPN credentials in COOKIE_VALUE. Copy espn_s2 and SWID from your browser's cookies.
-5. Run update-discord.js to create all commands for your discord bot, and also create them in the Slack app portal.
+4. (Optional) Store your ESPN credentials in COOKIE_VALUE. Copy `espn_s2` and `SWID` from your browser's cookies.
+5. Run `node update-discord.js` to create all commands for your discord bot, and also create them in the Slack app portal.
 6. Run `docker compose up` to start the apps together
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ## Roadmap
 
@@ -121,19 +117,19 @@ Feel free to self-host this bot, in case you would like your own support for pri
   - [ ] Public Bot Deployment
 - [ ] Yahoo Support (v0.4)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 ## Contact
 
 Jarod Durkin - [@jaroddurkin](https://twitter.com/jaroddurkin) - jarod@durkin.app
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">Back to top</a>)</p>
 
 [forks-shield]: https://img.shields.io/github/forks/jaroddurkin/FantasyBot.svg?style=for-the-badge
 [forks-url]: https://github.com/jaroddurkin/FantasyBot/network/members
