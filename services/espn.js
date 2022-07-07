@@ -83,6 +83,7 @@ module.exports = {
                     let playerTeam = ESPN_NFLTEAM_MAPS[player['playerPoolEntry']['player']['proTeamId']];
                     let playerPosition = ESPN_POSITION_MAPS[player['playerPoolEntry']['player']['defaultPositionId']];
                     let injuryStatus;
+                    // defense positions don't have an entry for injuries, so this is hardcoded
                     if (playerPosition === 'D/ST') {
                         injuryStatus = 'N/A';
                     } else {
@@ -106,6 +107,7 @@ module.exports = {
             record['L'] = t['record']['overall']['losses']
             record['T'] = t['record']['overall']['ties']
             record['GB'] = t['record']['overall']['gamesBack']
+            // streak may be null (in the case of games not being played yet)
             if (t['record']['overall']['streakType'] !== null) {
                 record['streak'] = t['record']['overall']['streakLength'] + t['record']['overall']['streakType'][0];
             } else {
@@ -135,6 +137,8 @@ module.exports = {
         for (let matchup of response.schedule) {
             let userPoints, oppPoints, opponent;
             let gameNumber = matchup['matchupPeriodId'];
+            // games are not returned by a per team basis
+            // the selected user could be either home or away so we check before assuming
             if (matchup['home']['teamId'] === teamId) {
                 userPoints = matchup['home']['totalPoints'];
                 oppPoints = matchup['away']['totalPoints'];
@@ -200,6 +204,7 @@ module.exports = {
 
 async function sendRequest(id, settings, config) {
     let apiConfig = {};
+    // cookie will add support for private leagues
     if (config.cookie.length !== 0) {
         apiConfig['headers'] = {
             Cookie: config.cookie
