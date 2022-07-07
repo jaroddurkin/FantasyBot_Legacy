@@ -1,7 +1,7 @@
 const { App } = require('@slack/bolt');
 const pgp = require('pg-promise')();
 
-const espn = require('./services/espn');
+const espn = require('./services/espn/espn');
 const messenger = require('./formatters/SlackMessenger');
 const init_db = require('./db/init');
 const servers = require('./db/servers');
