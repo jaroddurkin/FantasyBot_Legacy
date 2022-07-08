@@ -50,7 +50,6 @@ describe('espn service', () => {
     test('standings are correct', async () => {
         sendRequest.mockReturnValue(mockTeamResponse);
         const standings = await espn.standings('12345678', requestOptions);
-        console.log(standings);
         expect(standings[1].W).toBe(3);
         expect(standings[1].seed).toBe(9);
         expect(standings[2].W).toBe(7);
