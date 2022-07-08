@@ -1,0 +1,47 @@
+{
+    "gameId": 1,
+    "id": 12345678,
+    "members": [
+      {
+        "displayName": "RANDOM12345",
+        "id": "{0}",
+        "isLeagueManager": true
+      },
+      {
+        "displayName": "USER54321",
+        "id": "{1}",
+        "isLeagueManager": false
+      }
+    ],
+    "scoringPeriodId": 19,
+    "seasonId": 2021,
+    "segmentId": 0,
+    "settings": {
+      "name": "League"
+    },
+    "status": {
+      "currentMatchupPeriod": 16,
+      "isActive": true,
+      "latestScoringPeriod": 19
+    },
+    "teams": [
+      {
+        "abbrev": "TEAM",
+        "id": 1,
+        "location": "Team",
+        "nickname": "Player",
+        "owners": [
+          "{0}"
+        ]
+      },
+      {
+        "abbrev": "FAN",
+        "id": 2,
+        "location": "Fantasy",
+        "nickname": "Football",
+        "owners": [
+          "{1}"
+        ]
+      }
+    ]
+}

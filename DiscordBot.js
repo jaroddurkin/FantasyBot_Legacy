@@ -2,7 +2,7 @@ const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const pgp = require('pg-promise')();
 
-const espn = require('./services/espn');
+const espn = require('./services/espn/espn');
 const messenger = require('./formatters/DiscordMessenger');
 const init_db = require('./db/init');
 const servers = require('./db/servers');

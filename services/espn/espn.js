@@ -1,7 +1,5 @@
-const axios = require('axios');
-const fantasy = require('./objects');
-
-const ESPN_SERVICE_URL = 'https://fantasy.espn.com/apis/v3/games/ffl/seasons/2021/segments/0/leagues/';
+const fantasy = require('../objects');
+const service = require('./init');
 
 const ESPN_POSITION_MAPS = {
     1: 'QB',
@@ -51,7 +49,7 @@ const ESPN_NFLTEAM_MAPS = {
 module.exports = {
 
     validateLeague: async function(id, config) {
-        let response = await sendRequest(id, '', config);
+        let response = await service.sendRequest(id, '', config);
         if (Object.keys(response).length === 0) {
             return false;
         } else {
@@ -60,7 +58,7 @@ module.exports = {
     },
 
     leagueInfo: async function(id, config) {
-        let response = await sendRequest(id, '', config);
+        let response = await service.sendRequest(id, '', config);
         let teamList = response['teams'];
         let league = new fantasy.League(id, response['settings'].name);
         for (var team of teamList) {
@@ -71,7 +69,7 @@ module.exports = {
     },
 
     roster: async function(id, config, team) {
-        let response = await sendRequest(id, '?view=mRoster', config);
+        let response = await service.sendRequest(id, '?view=mRoster', config);
         let roster = [];
         for (let t of response.teams) {
             if (t['id'] !== team.id) {
@@ -98,7 +96,7 @@ module.exports = {
     },
 
     standings: async function(id, config) {
-        let response = await sendRequest(id, '?view=mTeam', config);
+        let response = await service.sendRequest(id, '?view=mTeam', config);
         let teams = {};
         for (let t of response.teams) {
             let team = new fantasy.Team(t.id, t.location, t.nickname, t.abbrev);
@@ -132,7 +130,7 @@ module.exports = {
             }
             teamMap[team.id] = team;
         }
-        let response = await sendRequest(id, '?view=mMatchup', config);
+        let response = await service.sendRequest(id, '?view=mMatchup', config);
         let schedule = [];
         for (let matchup of response.schedule) {
             let userPoints, oppPoints, opponent;
@@ -176,7 +174,7 @@ module.exports = {
         for (let team of league.teams) {
             teamMap[team.id] = team;
         }
-        let response = await sendRequest(id, '?view=mMatchup', config);
+        let response = await service.sendRequest(id, '?view=mMatchup', config);
         let schedule = [];
         for (let matchup of response.schedule) {
             if (matchup['matchupPeriodId'].toString() !== week) {
@@ -200,23 +198,4 @@ module.exports = {
         return schedule;
     }
 
-};
-
-async function sendRequest(id, settings, config) {
-    let apiConfig = {};
-    // cookie will add support for private leagues
-    if (config.cookie.length !== 0) {
-        apiConfig['headers'] = {
-            Cookie: config.cookie
-        };
-        apiConfig['withCredentials'] = true;
-    }
-    let res = await axios.get(ESPN_SERVICE_URL + id + settings, apiConfig)
-        .then(function (res) {
-            return res.data;
-        })
-        .catch(function (err) {
-            return {};
-        });
-    return res;
 };
