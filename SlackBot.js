@@ -81,7 +81,7 @@ app.command('/roster', async ({command, ack, say}) => {
     // check if team actually exists
     let targetTeam = null;
     for (let t of leagueInfo.teams) {
-        if (t.abbrev.toLowerCase() === team.toLowerCase()) {
+        if (t.nickname.toLowerCase() === team.toLowerCase()) {
             targetTeam = t;
         }
     }

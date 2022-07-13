@@ -77,7 +77,7 @@ client.on('interactionCreate', async interaction => {
 
         // check if team exists before continuing
         for (let t of leagueInfo.teams) {
-            if (t.abbrev.toLowerCase() === team.toLowerCase()) {
+            if (t.nickname.toLowerCase() === team.toLowerCase()) {
                 targetTeam = t
             }
         }

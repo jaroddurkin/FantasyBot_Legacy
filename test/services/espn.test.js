@@ -35,8 +35,8 @@ describe('espn service', () => {
         const league = await espn.leagueInfo('12345678', requestOptions);
         expect(league.numTeams).toBe(2);
         expect(league.teams.length).toBe(2);
-        expect(league.teams[0].abbrev).toBe('TEAM');
-        expect(league.teams[1].abbrev).toBe('FAN');
+        expect(league.teams[0].nickname).toBe('TEAM');
+        expect(league.teams[1].nickname).toBe('FAN');
     });
 
     test('roster returns players', async () => {

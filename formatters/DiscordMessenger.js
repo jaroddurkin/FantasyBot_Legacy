@@ -7,8 +7,8 @@ module.exports = {
         msgOut.setTitle(`Teams in ${league.name}`);
         for (var team of league.teams) {
             msgOut.addFields({
-                name: team.abbrev,
-                value: `${team.location} ${team.name}`
+                name: team.nickname,
+                value: team.name
             });
         }
         return msgOut;
@@ -16,7 +16,7 @@ module.exports = {
 
     getRoster: function(team, roster) {
         let msgOut = new MessageEmbed();
-        msgOut.setTitle(`Players currently on ${team.location} ${team.name} (${team.abbrev})`);
+        msgOut.setTitle(`Players currently on ${team.name} (${team.nickname})`);
         for (var player of roster) {
             value = `Position: ${player.position}\n`;
             value += `Team: ${player.nflTeam}\n`;
@@ -39,7 +39,7 @@ module.exports = {
             let record = standings[team];
             t = record['fullTeam'];
             line = {};
-            line.name = `${t.location} ${t.name} (${t.abbrev})`;
+            line.name = `${t.name} (${t.nickname})`;
             line.value = `Seed: ${record.seed}\n`;
             line.value += `Record: ${record.W}-${record.L}-${record.T}\n`;
             line.value += `Games Back: ${record.GB}\n`;
@@ -56,10 +56,10 @@ module.exports = {
 
     getTeamSchedule: function(schedule) {
         let msgOut = new MessageEmbed();
-        msgOut.setTitle(`Schedule for ${schedule[0].user.location} ${schedule[0].user.name}`);
+        msgOut.setTitle(`Schedule for ${schedule[0].user.name}`);
 
         for (let game of schedule) {
-            let value = `${game.opponent.location} ${game.opponent.name} (${game.opponent.abbrev})\n`;
+            let value = `${game.opponent.name} (${game.opponent.nickname})\n`;
             value += `Score: ${game.userPoints} - ${game.oppPoints}\n`;
             value += `Result: ${game.gameResult}`;
             msgOut.addFields({
@@ -76,8 +76,8 @@ module.exports = {
         msgOut.setTitle(`Schedule for Game ${schedule[0].week}`);
 
         for (let game of schedule) {
-            let name = `${game.away.location} ${game.away.name} vs. ${game.home.location} ${game.home.name}`;
-            let value = `Score: ${game.away.abbrev} ${game.awayPoints} - ${game.homePoints} ${game.home.abbrev}\n`;
+            let name = `${game.away.name} vs. ${game.home.name}`;
+            let value = `Score: ${game.away.nickname} ${game.awayPoints} - ${game.homePoints} ${game.home.nickname}\n`;
             value += `Winner: ${game.winner}`;
             msgOut.addFields({
                 name: name,

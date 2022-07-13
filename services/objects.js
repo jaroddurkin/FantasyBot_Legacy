@@ -15,11 +15,10 @@ class League {
 
 class Team {
 
-    constructor(id, location, name, abbrev) {
+    constructor(id, name, nickname) {
         this.id = id;
-        this.location = location;
         this.name = name;
-        this.abbrev = abbrev;
+        this.nickname = nickname;
         this.roster = [];
     }
 

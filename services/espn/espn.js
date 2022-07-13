@@ -62,7 +62,7 @@ module.exports = {
         let teamList = response['teams'];
         let league = new fantasy.League(id, response['settings'].name);
         for (var team of teamList) {
-            let newTeam = new fantasy.Team(team.id, team.location, team.nickname, team.abbrev);
+            let newTeam = new fantasy.Team(team.id, `${team.location} ${team.nickname}`, team.abbrev);
             league.addTeam(newTeam);
         }
         return league;
@@ -99,7 +99,7 @@ module.exports = {
         let response = await service.sendRequest(id, '?view=mTeam', config);
         let teams = {};
         for (let t of response.teams) {
-            let team = new fantasy.Team(t.id, t.location, t.nickname, t.abbrev);
+            let team = new fantasy.Team(t.id, `${t.location} ${t.nickname}`, t.abbrev);
             let record = {};
             record['W'] = t['record']['overall']['wins'];
             record['L'] = t['record']['overall']['losses']
@@ -125,7 +125,7 @@ module.exports = {
         let teamId = -1;
         let teamMap = {};
         for (let team of league.teams) {
-            if (team.abbrev.toLowerCase() === givenTeam.toLowerCase()) {
+            if (team.nickname.toLowerCase() === givenTeam.toLowerCase()) {
                 teamId = team.id;
             }
             teamMap[team.id] = team;
@@ -187,11 +187,11 @@ module.exports = {
             game['away'] = teamMap[matchup['away']['teamId']];
             game['week'] = week;
             if (game['homePoints'] > game['awayPoints']) {
-                game['winner'] = game['home'].abbrev;
+                game['winner'] = game['home'].nickname;
             } else if (game['homePoints'] == game['awayPoints']) {
                 game['winner'] = 'Tie';
             } else {
-                game['winner'] = game['away'].abbrev;
+                game['winner'] = game['away'].nickname;
             }
             schedule.push(game);
         }

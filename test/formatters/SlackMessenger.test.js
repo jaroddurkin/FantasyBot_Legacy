@@ -5,8 +5,8 @@ describe('slack messenger', () => {
 
     test('league info command with multiple teams', () => {
         let league = new fantasy.League('12345678', 'League');
-        league.addTeam(new fantasy.Team('1', 'Team', 'Player', 'TEAM'));
-        league.addTeam(new fantasy.Team('2', 'Fantasy', 'Football', 'FAN'));
+        league.addTeam(new fantasy.Team('1', 'Team Player', 'TEAM'));
+        league.addTeam(new fantasy.Team('2', 'Fantasy Football', 'FAN'));
         const message = messenger.getLeagueInfo(league);
         expect(message.blocks.length).toBe(3);
         expect(message.blocks[0].text.text).toBe("Teams in League");
@@ -21,7 +21,7 @@ describe('slack messenger', () => {
     });
 
     test('roster command with multiple players', () => {
-        let team = new fantasy.Team('1', 'Team', 'Player', 'TEAM');
+        let team = new fantasy.Team('1', 'Team Player', 'TEAM');
         let player1 = new fantasy.Player('Joe Football', '1', 'Eagles (PHI)', 'QB', 'Active');
         let player2 = new fantasy.Player('John Doe', '2', 'Rams (LAR)', 'WR', 'Questionable');
         const message = messenger.getRoster(team, [player1, player2]);
@@ -32,7 +32,7 @@ describe('slack messenger', () => {
     });
 
     test('roster command with no players', () => {
-        let team = new fantasy.Team('1', 'Team', 'Player', 'TEAM');
+        let team = new fantasy.Team('1', 'Team Player', 'TEAM');
         const message = messenger.getRoster(team, []);
         expect(message.blocks.length).toBe(1);
         expect(message.blocks[0].text.text).toBe("Players currently on:\n*Team Player (TEAM)*");
@@ -41,7 +41,7 @@ describe('slack messenger', () => {
     test('standings command with multiple teams', () => {
         let standings = {
             1: {
-                fullTeam: new fantasy.Team('1', 'Team', 'Player', 'TEAM'),
+                fullTeam: new fantasy.Team('1', 'Team Player', 'TEAM'),
                 seed: 1,
                 W: 10,
                 L: 6,
@@ -51,7 +51,7 @@ describe('slack messenger', () => {
                 PA: 1500
             },
             2: {
-                fullTeam: new fantasy.Team('2', 'Fantasy', 'Football', 'FAN'),
+                fullTeam: new fantasy.Team('2', 'Fantasy Football', 'FAN'),
                 seed: 2,
                 W: 6,
                 L: 10,
@@ -77,8 +77,8 @@ describe('slack messenger', () => {
     test('team schedule command with single game', () => {
         const schedule = [
             {
-                user: new fantasy.Team('1', 'Team', 'Player', 'TEAM'),
-                opponent: new fantasy.Team('2', 'Fantasy', 'Football', 'FAN'),
+                user: new fantasy.Team('1', 'Team Player', 'TEAM'),
+                opponent: new fantasy.Team('2', 'Fantasy Football', 'FAN'),
                 userPoints: 200,
                 oppPoints: 150,
                 gameResult: 'W',
@@ -94,8 +94,8 @@ describe('slack messenger', () => {
     test('week schedule command with single game', () => {
         const schedule = [
             {
-                home: new fantasy.Team('1', 'Team', 'Player', 'TEAM'),
-                away: new fantasy.Team('2', 'Fantasy', 'Football', 'FAN'),
+                home: new fantasy.Team('1', 'Team Player', 'TEAM'),
+                away: new fantasy.Team('2', 'Fantasy Football', 'FAN'),
                 week: '1',
                 homePoints: 200,
                 awayPoints: 150,
