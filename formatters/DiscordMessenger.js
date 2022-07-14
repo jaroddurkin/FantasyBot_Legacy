@@ -56,14 +56,20 @@ module.exports = {
 
     getTeamSchedule: function(schedule) {
         let msgOut = new MessageEmbed();
-        msgOut.setTitle(`Schedule for ${schedule[0].user.name}`);
+        msgOut.setTitle(`Schedule for ${schedule[0].homeTeam.name}`);
 
         for (let game of schedule) {
-            let value = `${game.opponent.name} (${game.opponent.nickname})\n`;
-            value += `Score: ${game.userPoints} - ${game.oppPoints}\n`;
-            value += `Result: ${game.gameResult}`;
+            let value = `${game.awayTeam.name} (${game.awayTeam.nickname})\n`;
+            value += `Score: ${game.homePoints} - ${game.awayPoints}\n`;
+            if (game.winner == game.awayTeam.nickname) {
+                value += 'Result: L';
+            } else if (game.winner == game.homeTeam.nickname) {
+                value += 'Result: W';
+            } else {
+                value = 'Result: T';
+            }
             msgOut.addFields({
-                name: `Game: ${game.gameNumber}`,
+                name: `Game: ${game.week}`,
                 value: value
             });
         }
@@ -76,8 +82,8 @@ module.exports = {
         msgOut.setTitle(`Schedule for Game ${schedule[0].week}`);
 
         for (let game of schedule) {
-            let name = `${game.away.name} vs. ${game.home.name}`;
-            let value = `Score: ${game.away.nickname} ${game.awayPoints} - ${game.homePoints} ${game.home.nickname}\n`;
+            let name = `${game.awayTeam.name} vs. ${game.homeTeam.name}`;
+            let value = `Score: ${game.awayTeam.nickname} ${game.awayPoints} - ${game.homePoints} ${game.homeTeam.nickname}\n`;
             value += `Winner: ${game.winner}`;
             msgOut.addFields({
                 name: name,

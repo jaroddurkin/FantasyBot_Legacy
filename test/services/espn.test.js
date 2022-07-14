@@ -60,16 +60,16 @@ describe('espn service', () => {
         sendRequest.mockReturnValueOnce(mockLeagueResponse).mockReturnValue(mockMatchupResponse);
         const schedule = await espn.teamSchedule('12345678', requestOptions, 'TEAM');
         expect(schedule.length).toBe(1);
-        expect(schedule[0].gameResult).toBe('L');
-        expect(schedule[0].gameNumber).toBe(1);
+        expect(schedule[0].winner).toBe('FAN');
+        expect(schedule[0].week).toBe(1);
     });
 
     test('get schedule for other team', async () => {
         sendRequest.mockReturnValueOnce(mockLeagueResponse).mockReturnValue(mockMatchupResponse);
         const schedule = await espn.teamSchedule('12345678', requestOptions, 'FAN');
         expect(schedule.length).toBe(1);
-        expect(schedule[0].gameResult).toBe('W');
-        expect(schedule[0].gameNumber).toBe(1);
+        expect(schedule[0].winner).toBe('FAN');
+        expect(schedule[0].week).toBe(1);
     });
 
     test('get schedule for entire league', async () => {

@@ -75,15 +75,10 @@ describe('slack messenger', () => {
     });
 
     test('team schedule command with single game', () => {
+        const user = new fantasy.Team('1', 'Team Player', 'TEAM');
+        const opponent = new fantasy.Team('2', 'Fantasy Football', 'FAN');
         const schedule = [
-            {
-                user: new fantasy.Team('1', 'Team Player', 'TEAM'),
-                opponent: new fantasy.Team('2', 'Fantasy Football', 'FAN'),
-                userPoints: 200,
-                oppPoints: 150,
-                gameResult: 'W',
-                gameNumber: '1'
-            }
+            new fantasy.Game(user, 200, opponent, 150, '1'),
         ];
         const message = messenger.getTeamSchedule(schedule);
         expect(message.blocks.length).toBe(2);
@@ -92,15 +87,10 @@ describe('slack messenger', () => {
     });
 
     test('week schedule command with single game', () => {
+        const user = new fantasy.Team('1', 'Team Player', 'TEAM');
+        const opponent = new fantasy.Team('2', 'Fantasy Football', 'FAN');
         const schedule = [
-            {
-                home: new fantasy.Team('1', 'Team Player', 'TEAM'),
-                away: new fantasy.Team('2', 'Fantasy Football', 'FAN'),
-                week: '1',
-                homePoints: 200,
-                awayPoints: 150,
-                winner: 'TEAM'
-            }
+            new fantasy.Game(user, 200, opponent, 150, '1'),
         ];
         const message = messenger.getWeekSchedule(schedule);
         expect(message.blocks.length).toBe(2);

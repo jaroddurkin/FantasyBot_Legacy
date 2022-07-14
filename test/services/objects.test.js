@@ -16,11 +16,13 @@ describe('class structures', () => {
     let league;
     let team;
     let player;
+    let game;
 
     beforeEach(() => {
         league = new fantasy.League(LEAGUE_ID, LEAGUE_NAME);
         team = new fantasy.Team(TEAM_ID, TEAM_NAME, TEAM_NICKNAME);
         player = new fantasy.Player(PLAYER_NAME, PLAYER_ID, PLAYER_NFL_TEAM, PLAYER_POSITION, PLAYER_INJURY);
+        game = new fantasy.Game(team, 200, new fantasy.Team('1', 'Fantasy Football', 'FAN'), 150, '1');
     });
 
     // simple tests for constructors, these definitely shouldn't fail
@@ -39,8 +41,6 @@ describe('class structures', () => {
         expect(team.roster.length).toBe(0);
     });
 
-    // test other methods within these classes
-
     test('player constructor works', () => {
         expect(player.name).toBe(PLAYER_NAME);
         expect(player.id).toBe(PLAYER_ID);
@@ -48,6 +48,17 @@ describe('class structures', () => {
         expect(player.position).toBe(PLAYER_POSITION);
         expect(player.injuryStatus).toBe(PLAYER_INJURY);
     });
+
+    test('game constructor works', () => {
+        expect(game.homeTeam.nickname).toBe('TEAM');
+        expect(game.awayTeam.nickname).toBe('FAN');
+        expect(game.week).toBe('1');
+        expect(game.homePoints).toBe(200);
+        expect(game.awayPoints).toBe(150);
+        expect(game.winner).toBe('TEAM');
+    });
+
+    // test other methods within these classes
 
     test('player is added to team', () => {
         team.addPlayer(player);

@@ -43,4 +43,22 @@ class Player {
     }
 }
 
-module.exports = {League, Team, Player};
+class Game {
+
+    constructor(homeTeam, homePoints, awayTeam, awayPoints, week) {
+        this.homeTeam = homeTeam;
+        this.homePoints = homePoints;
+        this.awayTeam = awayTeam;
+        this.awayPoints = awayPoints;
+        this.week = week;
+        if (this.homePoints > this.awayPoints) {
+            this.winner = this.homeTeam.nickname;
+        } else if (this.homePoints == this.awayPoints) {
+            this.winner = 'Tie';
+        } else {
+            this.winner = this.awayTeam.nickname;
+        }
+    }
+}
+
+module.exports = {League, Team, Player, Game};

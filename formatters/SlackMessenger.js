@@ -50,13 +50,19 @@ module.exports = {
 
     getTeamSchedule: function(schedule) {
         let msgOut = { 'blocks': [] };
-        msgOut.blocks.push(createSection(`*Schedule for ${schedule[0].user.name}*`));
+        msgOut.blocks.push(createSection(`*Schedule for ${schedule[0].homeTeam.name}*`));
 
         for (let game of schedule) {
-            let text = `*Game ${game.gameNumber}*\n`;
-            text += `${game.opponent.name} (${game.opponent.nickname})\n`;
-            text += `Score: ${game.userPoints} - ${game.oppPoints}\n`;
-            text += `Result: ${game.gameResult}`;
+            let text = `*Game ${game.week}*\n`;
+            text += `${game.awayTeam.name} (${game.awayTeam.nickname})\n`;
+            text += `Score: ${game.homePoints} - ${game.awayPoints}\n`;
+            if (game.winner == game.awayTeam.nickname) {
+                text += 'Result: L';
+            } else if (game.winner == game.homeTeam.nickname) {
+                text += 'Result: W';
+            } else {
+                text = 'Result: T';
+            }
             msgOut.blocks.push(createSection(text));
         };
 
@@ -68,8 +74,8 @@ module.exports = {
         msgOut.blocks.push(createSection(`*Schedule for Game ${schedule[0].week}*`));
 
         for (let game of schedule) {
-            let text = `*${game.away.name} vs. ${game.home.name}*\n`;
-            text += `Score: ${game.away.nickname} ${game.awayPoints} - ${game.homePoints} ${game.home.nickname}\n`;
+            let text = `*${game.awayTeam.name} vs. ${game.homeTeam.name}*\n`;
+            text += `Score: ${game.awayTeam.nickname} ${game.awayPoints} - ${game.homePoints} ${game.homeTeam.nickname}\n`;
             text += `Winner: ${game.winner}`;
             msgOut.blocks.push(createSection(text));
         }
