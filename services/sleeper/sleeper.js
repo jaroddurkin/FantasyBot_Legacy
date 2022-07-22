@@ -162,7 +162,3 @@ module.exports = {
         return schedule;
     }
 }
-
-function calculateSeeding(teams) {
-
-}

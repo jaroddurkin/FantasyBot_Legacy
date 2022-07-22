@@ -1,0 +1,60 @@
+[
+    {
+        "starters_points": [
+            30.34,
+            10.7,
+            5.9,
+            5.9,
+            22.5,
+            26.5,
+            0.0,
+            13.2,
+            7.0,
+            6.0
+        ],
+        "starters": [
+            "WAS"
+        ],
+        "roster_id": 1,
+        "points": 128.04,
+        "players_points": {
+            "WAS": 6.0,
+            "947": 5.9
+        },
+        "players": [
+            "WAS",
+            "947"
+        ],
+        "matchup_id": 4,
+        "custom_points": null
+    },
+    {
+        "starters_points": [
+            3.32,
+            19.4,
+            11.7,
+            10.1,
+            23.8,
+            12.2,
+            23.4,
+            12.7,
+            11.0,
+            10.0
+        ],
+        "starters": [
+            "96"
+        ],
+        "roster_id": 2,
+        "points": 137.62,
+        "players_points": {
+            "SF": 10.0,
+            "96": 3.32
+        },
+        "players": [
+            "SF",
+            "96"
+        ],
+        "matchup_id": 4,
+        "custom_points": null
+    }
+]
