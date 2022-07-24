@@ -39,7 +39,8 @@ describe('sleeper service', () => {
 
     test('roster returns players', async () => {
         sendRequest.mockReturnValueOnce(mockUsersResponse).mockReturnValueOnce(mockRostersResponse);
-        const roster = await sleeper.roster('123', 'Player');
+        const team = { nickname: 'Player' }
+        const roster = await sleeper.roster('123', team);
         expect(roster.length).toBeGreaterThan(0);
         expect(roster[0].id).toBe('1266');
         expect(roster[1].id).toBe('2320');
