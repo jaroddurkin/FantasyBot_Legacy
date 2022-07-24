@@ -68,7 +68,7 @@ module.exports = {
         return league;
     },
 
-    roster: async function(id, config, team) {
+    roster: async function(id, team, config) {
         let response = await service.sendRequest(id, '?view=mRoster', config);
         let roster = [];
         for (let t of response.teams) {
@@ -120,7 +120,7 @@ module.exports = {
         return teams;
     },
 
-    teamSchedule: async function(id, config, givenTeam) {
+    teamSchedule: async function(id, givenTeam, config) {
         let league = await this.leagueInfo(id, config);
         let teamId = -1;
         let teamMap = {};
@@ -154,7 +154,7 @@ module.exports = {
         return schedule;
     },
 
-    weekSchedule: async function(id, config, week) {
+    weekSchedule: async function(id, week, config) {
         let league = await this.leagueInfo(id, config);
         let teamMap = {};
         for (let team of league.teams) {

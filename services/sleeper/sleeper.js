@@ -73,7 +73,7 @@ module.exports = {
         let userResp = await service.sendRequest(id, '/users');
         let user_id;
         for (const user of userResp) {
-            if (team === user.display_name) {
+            if (team.nickname === user.display_name) {
                 user_id = user.user_id;
             }
         }
