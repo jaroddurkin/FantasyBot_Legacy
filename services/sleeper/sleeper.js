@@ -58,6 +58,7 @@ module.exports = {
         for (const team of userResp) {
             let roster_id;
             for (const roster of rosterResp) {
+                // map roster ID cause other endpoints use roster ID for data
                 if (roster.owner_id === team.user_id) {
                     roster_id = roster.roster_id;
                 }
@@ -84,12 +85,15 @@ module.exports = {
                 for (const playerNumber of roster.players) {
                     let player = playerData[playerNumber];
                     let playerName = `${player['first_name']} ${player['last_name']}`;
+                    // team is null in sleeper if player is free agent
                     let playerTeam = player['team'] ? SLEEPER_NFLTEAM_MAPS[player['team']] : 'Free Agent (FA)';
                     let playerPosition = player['position'];
                     let injuryStatus;
-                    if (playerPosition === "DEF") {
+                    // sleeper does not have injury status key for defense
+                    if (playerPosition === 'DEF') {
                         injuryStatus = 'N/A';
                     } else {
+                        // null injury means active
                         injuryStatus = player['injury_status'] ? player['injury_status'] : 'Active';
                     }
                     playerRoster.push(new fantasy.Player(playerName, playerNumber, playerTeam, playerPosition, injuryStatus));
@@ -123,10 +127,12 @@ module.exports = {
             record['fullTeam'] = team;
             teams.push(record);
         }
+        // sleeper does not give seeds in API, so we seed ourselves based on wins and points for.
         let sortedTeams = teams.sort((teamA, teamB) => teamB.W - teamA.W || teamB.PF - teamA.PF);
         let teamObj = {};
         let seed = 1;
         for (const team of sortedTeams) {
+            // games back in fantasy is the difference in wins.
             team['GB'] = sortedTeams[0]['W'] - team['W'];
             team['seed'] = seed;
             teamObj[seed] = team;
@@ -148,6 +154,7 @@ module.exports = {
         }
         let matchups = {};
         for (let matchup of response) {
+            // matchups are given per user, so we have to have a weird way to match a single game together
             if (matchups[matchup.matchup_id]) {
                 matchups[matchup.matchup_id].awayTeam = teamMap[matchup.roster_id] ? teamMap[matchup.roster_id] : new fantasy.Team('', 'Team Bot', 'Bot');
                 matchups[matchup.matchup_id].awayPoints = matchup.points;

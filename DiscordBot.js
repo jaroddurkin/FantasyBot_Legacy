@@ -77,6 +77,7 @@ client.on('interactionCreate', async interaction => {
     let leagueId = config.league;
     let platform = config.platform;
     
+    // configure service up here so we dont have use too many conditionals
     let service = null;
     if (platform === "espn") {
         service = espn;

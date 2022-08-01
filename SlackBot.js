@@ -24,6 +24,7 @@ const app = new App({
     socketMode: true
 });
 
+// this has to be done in each command so we just abstract as much as possible to here
 async function validateConfiguration(say, id) {
     let config = await servers.getConfigForServer(db, id);
     console.log(config);
