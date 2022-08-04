@@ -1,16 +1,18 @@
-const { sendRequest } = require('../../services/sleeper/init');
+const { sendRequest, playersData } = require('../../services/sleeper/init');
 const sleeper = require('../../services/sleeper/sleeper');
 
 const mockLeagueResponse = require('../mock/sleeper/league.json');
 const mockMatchupsResponse = require('../mock/sleeper/matchups.json');
 const mockRostersResponse = require('../mock/sleeper/rosters.json');
 const mockUsersResponse = require('../mock/sleeper/users.json');
+const mockPlayerData = require('../mock/sleeper/playerData.json');
 
 jest.mock('../../services/sleeper/init', () => {
     const actual = jest.requireActual('../../services/sleeper/init');
     return {
         ...actual,
-        sendRequest: jest.fn()
+        sendRequest: jest.fn(),
+        playersData: jest.fn(),
     };
 });
 
@@ -39,11 +41,14 @@ describe('sleeper service', () => {
 
     test('roster returns players', async () => {
         sendRequest.mockReturnValueOnce(mockUsersResponse).mockReturnValueOnce(mockRostersResponse);
+        playersData.mockReturnValue(mockPlayerData);
         const team = { nickname: 'Player' }
         const roster = await sleeper.roster('123', team);
         expect(roster.length).toBeGreaterThan(0);
         expect(roster[0].id).toBe('1266');
         expect(roster[1].id).toBe('2320');
+        expect(roster[0].name).toBe('Tom Brady');
+        expect(roster[1].name).toBe('Jalen Hurts');
     });
 
     test('standings are correct', async () => {

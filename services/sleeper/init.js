@@ -2,6 +2,13 @@ const axios = require('axios');
 
 const SLEEPER_SERVICE_URL = 'https://api.sleeper.app/v1/league/';
 
+let playerData;
+try {
+    playerData = require('./playerData.json');
+} catch(err) {
+    playerData = {};
+}
+
 module.exports = {
 
     sendRequest: async function(id, settings) {
@@ -13,5 +20,9 @@ module.exports = {
                 return {};
             });
         return res;
+    },
+
+    playersData: () => {
+        return playerData;
     }
 }

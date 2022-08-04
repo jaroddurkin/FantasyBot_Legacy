@@ -1,9 +1,6 @@
 const fantasy = require('../objects');
 const service = require('./init');
 
-// hardcoded player data until i create automation to pull data
-const playerData = require('./playerData.json');
-
 const SLEEPER_NFLTEAM_MAPS = {
     'ATL': 'Falcons (ATL)',
     'BUF': 'Bills (BUF)',
@@ -80,10 +77,11 @@ module.exports = {
         }
         let playerRoster = [];
         let rosterResp = await service.sendRequest(id, '/rosters');
+        let allPlayers = service.playersData();
         for (const roster of rosterResp) {
             if (roster.owner_id === user_id) {
                 for (const playerNumber of roster.players) {
-                    let player = playerData[playerNumber];
+                    let player = allPlayers[playerNumber];
                     let playerName = `${player['first_name']} ${player['last_name']}`;
                     // team is null in sleeper if player is free agent
                     let playerTeam = player['team'] ? SLEEPER_NFLTEAM_MAPS[player['team']] : 'Free Agent (FA)';
