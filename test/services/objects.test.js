@@ -5,9 +5,8 @@ describe('class structures', () => {
     const LEAGUE_ID = '123';
     const LEAGUE_NAME = 'League';
     const TEAM_ID = '1';
-    const TEAM_LOCATION = 'Team';
-    const TEAM_NAME = 'Player';
-    const TEAM_ABBREV = 'TEAM';
+    const TEAM_NAME = 'Team Player';
+    const TEAM_NICKNAME = 'TEAM';
     const PLAYER_NAME = 'Joe Football';
     const PLAYER_ID = '1';
     const PLAYER_NFL_TEAM = 'Eagles (PHI)';
@@ -17,11 +16,13 @@ describe('class structures', () => {
     let league;
     let team;
     let player;
+    let game;
 
     beforeEach(() => {
         league = new fantasy.League(LEAGUE_ID, LEAGUE_NAME);
-        team = new fantasy.Team(TEAM_ID, TEAM_LOCATION, TEAM_NAME, TEAM_ABBREV);
+        team = new fantasy.Team(TEAM_ID, TEAM_NAME, TEAM_NICKNAME);
         player = new fantasy.Player(PLAYER_NAME, PLAYER_ID, PLAYER_NFL_TEAM, PLAYER_POSITION, PLAYER_INJURY);
+        game = new fantasy.Game(team, 200, new fantasy.Team('1', 'Fantasy Football', 'FAN'), 150, '1');
     });
 
     // simple tests for constructors, these definitely shouldn't fail
@@ -35,13 +36,10 @@ describe('class structures', () => {
 
     test('team constructor works', () => {
         expect(team.id).toBe(TEAM_ID);
-        expect(team.location).toBe(TEAM_LOCATION);
         expect(team.name).toBe(TEAM_NAME);
-        expect(team.abbrev).toBe(TEAM_ABBREV);
+        expect(team.nickname).toBe(TEAM_NICKNAME);
         expect(team.roster.length).toBe(0);
     });
-
-    // test other methods within these classes
 
     test('player constructor works', () => {
         expect(player.name).toBe(PLAYER_NAME);
@@ -50,6 +48,17 @@ describe('class structures', () => {
         expect(player.position).toBe(PLAYER_POSITION);
         expect(player.injuryStatus).toBe(PLAYER_INJURY);
     });
+
+    test('game constructor works', () => {
+        expect(game.homeTeam.nickname).toBe('TEAM');
+        expect(game.awayTeam.nickname).toBe('FAN');
+        expect(game.week).toBe('1');
+        expect(game.homePoints).toBe(200);
+        expect(game.awayPoints).toBe(150);
+        expect(game.winner).toBe('TEAM');
+    });
+
+    // test other methods within these classes
 
     test('player is added to team', () => {
         team.addPlayer(player);

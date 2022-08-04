@@ -1,10 +1,10 @@
 module.exports = {
 
-    getLeagueFromServer: async function(db, serverId) {
+    getConfigForServer: async function(db, serverId) {
         let res = await db.any('SELECT * FROM Servers WHERE server = $1', [serverId])
             .then(function(data) {
                 if (data.length > 0) {
-                    return data[0].league;
+                    return data[0];
                 } else {
                     return null;
                 }
@@ -16,8 +16,8 @@ module.exports = {
         return res;
     },
 
-    setLeagueForServer: async function(db, serverId, leagueId) {
-        let res = await db.none('INSERT INTO Servers(server, league) VALUES($1, $2)', [serverId, leagueId])
+    setConfigForServer: async function(db, serverId, platform, leagueId) {
+        let res = await db.none('INSERT INTO Servers(server, platform, league) VALUES($1, $2, $3)', [serverId, platform, leagueId])
             .then(function() {
                 return true;
             })

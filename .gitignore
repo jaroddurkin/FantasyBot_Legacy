@@ -4,3 +4,4 @@ TOKEN
 CRED_*
 .DS_Store
 db/dev_db.bash
+services/sleeper/playerData.json

@@ -1,0 +1,22 @@
+[
+    {
+        "user_id": "1",
+        "settings": null,
+        "metadata": {},
+        "league_id": "123",
+        "is_owner": null,
+        "is_bot": false,
+        "display_name": "Player",
+        "avatar": null
+    },
+    {
+        "user_id": "2",
+        "settings": null,
+        "metadata": {},
+        "league_id": "123",
+        "is_owner": true,
+        "is_bot": false,
+        "display_name": "Fantasy",
+        "avatar": null
+    }
+]

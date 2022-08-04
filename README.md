@@ -33,6 +33,9 @@
       </ul>
     </li>
     <li>
+      <a href="#commands">Commands</a>
+    </li>
+    <li>
       <a href="#public-bot">Public Bot</a>
     </li>
     <li>
@@ -69,6 +72,39 @@ Two options to use this app, you can use the publicly hosted application (join l
 * [Docker](https://www.docker.com/)
 * [Jest](https://jestjs.io/)
 * [Axios](https://axios-http.com/)
+
+<p align="right">(<a href="#top">Back to top</a>)</p>
+
+## Commands
+
+This bot comes with a number of commands that access data from your Fantasy Football league, with plenty more coming soon. In Discord they use the Slash Command API, and in Slack it uses slash commands from the bot API as well.
+
+Before you use any commands for your league, you need to configure the server that you are currently in. This is done by using the config command.
+
+### Config
+* Example: /config (platform) (league ID)
+* Platform: The service that your fantasy football league is on (sleeper or espn)
+* League ID: The identifier for your given league. This is typically found in the URL when you're on the webpage for your league.
+
+After the league is configured, you can use any of the other commands.
+
+### League
+* Example: /league
+* Retrieves all of the teams that are currently in your league.
+
+### Roster
+* Example: /roster (identifier)
+* Identifier: For ESPN, this is the abbreviation for your team (such as TEAM). For sleeper, this is your username.
+* Retrieves a given roster in your configured league.
+
+### Standings
+* Example: /standings
+* Returns sorted standings (by seed) as well as statistics such as Wins, Losses, and Points for each team.
+
+### Schedule
+* Example: /schedule (type) (value)
+* Type: (week or team) Two types, get all games in a single week, or get all games in a year for a single team.
+* Value: (number or identifier) If week, the schedule for the week number given. If team, the identifier for the team.
 
 <p align="right">(<a href="#top">Back to top</a>)</p>
 
@@ -112,10 +148,13 @@ Feel free to self-host this bot, in case you would like your own support for pri
 
 ## Roadmap
 
-- [ ] Sleeper Support (v0.2)
+- [x] ESPN Support + Basic Commands (v0.1)
+- [x] Sleeper Support (v0.2)
 - [ ] Private ESPN Leagues for Public Bot (v0.3)
   - [ ] Public Bot Deployment
 - [ ] Yahoo Support (v0.4)
+- [ ] New Commands (v0.5)
+- [ ] GroupMe Bot (v0.6)
 
 <p align="right">(<a href="#top">Back to top</a>)</p>
 

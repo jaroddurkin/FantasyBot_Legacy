@@ -4,7 +4,7 @@ module.exports = {
         let msgOut = { 'blocks': [] };
         msgOut.blocks.push(createSection(`Teams in ${league.name}`));
         for (var team of league.teams) {
-            let text = `*${team.abbrev}*\n${team.location} ${team.name}`;
+            let text = `*${team.nickname}*\n${team.name}`;
             msgOut.blocks.push(createSection(text));
         }
         return msgOut;
@@ -12,7 +12,7 @@ module.exports = {
 
     getRoster: function(team, roster) {
         let msgOut = { 'blocks': [] };
-        let title = `Players currently on:\n*${team.location} ${team.name} (${team.abbrev})*`;
+        let title = `Players currently on:\n*${team.name} (${team.nickname})*`;
         msgOut.blocks.push(createSection(title));
         for (var player of roster) {
             let text = `*${player.name}*\n`;
@@ -33,7 +33,7 @@ module.exports = {
         for (let team in standings) {
             let record = standings[team];
             t = record['fullTeam'];
-            let text = `*${t.location} ${t.name} (${t.abbrev})*\n`
+            let text = `*${t.name} (${t.nickname})*\n`
             text += `Seed: ${record.seed}\n`;
             text += `Record: ${record.W}-${record.L}-${record.T}\n`;
             text += `Games Back: ${record.GB}\n`;
@@ -50,13 +50,19 @@ module.exports = {
 
     getTeamSchedule: function(schedule) {
         let msgOut = { 'blocks': [] };
-        msgOut.blocks.push(createSection(`*Schedule for ${schedule[0].user.location} ${schedule[0].user.name}*`));
+        msgOut.blocks.push(createSection(`*Schedule for ${schedule[0].homeTeam.name}*`));
 
         for (let game of schedule) {
-            let text = `*Game ${game.gameNumber}*\n`;
-            text += `${game.opponent.location} ${game.opponent.name} (${game.opponent.abbrev})\n`;
-            text += `Score: ${game.userPoints} - ${game.oppPoints}\n`;
-            text += `Result: ${game.gameResult}`;
+            let text = `*Game ${game.week}*\n`;
+            text += `${game.awayTeam.name} (${game.awayTeam.nickname})\n`;
+            text += `Score: ${game.homePoints} - ${game.awayPoints}\n`;
+            if (game.winner == game.awayTeam.nickname) {
+                text += 'Result: L';
+            } else if (game.winner == game.homeTeam.nickname) {
+                text += 'Result: W';
+            } else {
+                text = 'Result: T';
+            }
             msgOut.blocks.push(createSection(text));
         };
 
@@ -68,8 +74,8 @@ module.exports = {
         msgOut.blocks.push(createSection(`*Schedule for Game ${schedule[0].week}*`));
 
         for (let game of schedule) {
-            let text = `*${game.away.location} ${game.away.name} vs. ${game.home.location} ${game.home.name}*\n`;
-            text += `Score: ${game.away.abbrev} ${game.awayPoints} - ${game.homePoints} ${game.home.abbrev}\n`;
+            let text = `*${game.awayTeam.name} vs. ${game.homeTeam.name}*\n`;
+            text += `Score: ${game.awayTeam.nickname} ${game.awayPoints} - ${game.homePoints} ${game.homeTeam.nickname}\n`;
             text += `Winner: ${game.winner}`;
             msgOut.blocks.push(createSection(text));
         }

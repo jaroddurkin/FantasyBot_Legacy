@@ -35,14 +35,14 @@ describe('espn service', () => {
         const league = await espn.leagueInfo('12345678', requestOptions);
         expect(league.numTeams).toBe(2);
         expect(league.teams.length).toBe(2);
-        expect(league.teams[0].abbrev).toBe('TEAM');
-        expect(league.teams[1].abbrev).toBe('FAN');
+        expect(league.teams[0].nickname).toBe('TEAM');
+        expect(league.teams[1].nickname).toBe('FAN');
     });
 
     test('roster returns players', async () => {
         sendRequest.mockReturnValue(mockRosterResponse);
         const team = { id: 1 };
-        const roster = await espn.roster('12345678', requestOptions, team);
+        const roster = await espn.roster('12345678', team, requestOptions);
         expect(roster.length).toBeGreaterThan(0);
         expect(roster[0].name).toBe("Christian McCaffrey");
     });
@@ -58,23 +58,23 @@ describe('espn service', () => {
 
     test('get schedule for team', async () => {
         sendRequest.mockReturnValueOnce(mockLeagueResponse).mockReturnValue(mockMatchupResponse);
-        const schedule = await espn.teamSchedule('12345678', requestOptions, 'TEAM');
+        const schedule = await espn.teamSchedule('12345678', 'TEAM', requestOptions);
         expect(schedule.length).toBe(1);
-        expect(schedule[0].gameResult).toBe('L');
-        expect(schedule[0].gameNumber).toBe(1);
+        expect(schedule[0].winner).toBe('FAN');
+        expect(schedule[0].week).toBe(1);
     });
 
     test('get schedule for other team', async () => {
         sendRequest.mockReturnValueOnce(mockLeagueResponse).mockReturnValue(mockMatchupResponse);
-        const schedule = await espn.teamSchedule('12345678', requestOptions, 'FAN');
+        const schedule = await espn.teamSchedule('12345678', 'FAN', requestOptions);
         expect(schedule.length).toBe(1);
-        expect(schedule[0].gameResult).toBe('W');
-        expect(schedule[0].gameNumber).toBe(1);
+        expect(schedule[0].winner).toBe('FAN');
+        expect(schedule[0].week).toBe(1);
     });
 
     test('get schedule for entire league', async () => {
         sendRequest.mockReturnValueOnce(mockLeagueResponse).mockReturnValue(mockMatchupResponse);
-        const schedule = await espn.weekSchedule('12345678', requestOptions, '1');
+        const schedule = await espn.weekSchedule('12345678', '1', requestOptions);
         expect(schedule.length).toBe(1);
         expect(schedule[0].winner).toBe('FAN');
         expect(schedule[0].week).toBe('1');

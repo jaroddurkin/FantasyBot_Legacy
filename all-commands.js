@@ -9,8 +9,10 @@ module.exports = {
             new SlashCommandBuilder().setName('roster').setDescription('Get the roster for a given team.').addStringOption(option => {
                 return option.setName('identifier').setRequired(true).setDescription("The team that you want to fetch the roster for.")
             }),
-            new SlashCommandBuilder().setName('config').setDescription('Get current league ID or set new league ID for server.').addStringOption(option => {
-                return option.setName('league').setRequired(false).setDescription('ESPN league ID.')
+            new SlashCommandBuilder().setName('config').setDescription('Configure the bot using a platform and league ID.').addStringOption(option => {
+                return option.setName('platform').setRequired(false).setDescription('Sleeper or ESPN');
+            }).addStringOption(option => {
+                return option.setName('league').setRequired(false).setDescription('The league ID for the platform given.');
             }),
             new SlashCommandBuilder().setName('standings').setDescription('Gets the current standings for the league.'),
             new SlashCommandBuilder().setName('schedule').setDescription('Prints the schedule given your parameters.').addStringOption(option => {

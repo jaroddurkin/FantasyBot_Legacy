@@ -2,6 +2,7 @@ const { App } = require('@slack/bolt');
 const pgp = require('pg-promise')();
 
 const espn = require('./services/espn/espn');
+const sleeper = require('./services/sleeper/sleeper');
 const messenger = require('./formatters/SlackMessenger');
 const init_db = require('./db/init');
 const servers = require('./db/servers');
@@ -23,6 +24,18 @@ const app = new App({
     socketMode: true
 });
 
+// this has to be done in each command so we just abstract as much as possible to here
+async function validateConfiguration(say, id) {
+    let config = await servers.getConfigForServer(db, id);
+    console.log(config);
+    if (config === null) {
+        await say('Please configure this bot using /config');
+        return {service: null, platform: '', leagueId: ''};
+    } else {
+        return {service: config.platform === "espn" ? espn : sleeper, platform: config.platform, leagueId: config.league};
+    }
+}
+
 app.command('/ping', async ({command, ack, say}) => {
     await ack();
     await say('Pong!');
@@ -31,25 +44,40 @@ app.command('/ping', async ({command, ack, say}) => {
 app.command('/config', async ({command, ack, say}) => {
     await ack();
     if (command.text.length === 0) {
-        let league = await servers.getLeagueFromServer(db, command.channel_id);
-        if (league !== null) {
-            await say(`League ID currently configured: ${league}`);
+        let config = await servers.getConfigForServer(db, command.channel_id);
+        if (config !== null) {
+            await say(`Currently configured for platform: ${config.platform} with league: ${config.league}`);
         } else {
             await say('League not configured!');
         }
     } else {
-        let leagueId = command.text;
-        let exists = await espn.validateLeague(leagueId, apiConfiguration);
+        let options = command.text.split(' ');
+        if (options.length != 2) {
+            await say('Invalid arguments for command!');
+            return;
+        }
+        let platform = options[0].toLowerCase();
+        let leagueId = options[1].toLowerCase();
+        if (platform !== "espn" && platform !== "sleeper") {
+            await say('Invalid platform!');
+            return;
+        }
+        let exists = false;
+        if (platform === "espn") {
+            exists = await espn.validateLeague(leagueId, apiConfiguration);
+        } else {
+            exists = await sleeper.validateLeague(leagueId);
+        }
         if (!exists) {
             await say('League does not exist!');
             return;
         }
         await servers.deleteLeagueRelation(db, command.channel_id, leagueId);
-        let status = await servers.setLeagueForServer(db, command.channel_id, leagueId);
+        let status = await servers.setConfigForServer(db, command.channel_id, platform, leagueId);
         if (!status) {
             await say('Server does not exist!');
         } else {
-            await say('League ID set!');
+            await say('Successfully configured bot!');
         }
     }
     return;
@@ -57,12 +85,11 @@ app.command('/config', async ({command, ack, say}) => {
 
 app.command('/league', async ({command, ack, say}) => {
     await ack();
-    let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId === null) {
-        await say('Please configure this bot using /config');
+    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    if (service === null || platform === '' || leagueId === '') {
         return;
     }
-    let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
+    let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
     let reply = messenger.getLeagueInfo(leagueInfo);
     await say(reply);
     return;
@@ -70,18 +97,17 @@ app.command('/league', async ({command, ack, say}) => {
 
 app.command('/roster', async ({command, ack, say}) => {
     await ack();
-    let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId === null) {
-        await say('Please configure this bot using /config');
+    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    if (service === null || platform === '' || leagueId === '') {
         return;
     }
     let team = command.text;
-    let leagueInfo = await espn.leagueInfo(leagueId, apiConfiguration);
+    let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
 
     // check if team actually exists
     let targetTeam = null;
     for (let t of leagueInfo.teams) {
-        if (t.abbrev.toLowerCase() === team.toLowerCase()) {
+        if (t.nickname.toLowerCase() === team.toLowerCase()) {
             targetTeam = t;
         }
     }
@@ -90,7 +116,7 @@ app.command('/roster', async ({command, ack, say}) => {
         return;
     }
 
-    let roster = await espn.roster(leagueId, apiConfiguration, targetTeam);
+    let roster = await service.roster(leagueId, targetTeam, apiConfiguration);
     let reply = messenger.getRoster(targetTeam, roster);
     await say(reply);
     return;
@@ -98,12 +124,11 @@ app.command('/roster', async ({command, ack, say}) => {
 
 app.command('/standings', async ({command, ack, say}) => {
     await ack();
-    let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId === null) {
-        await say('Please configure this bot using /config');
+    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    if (service === null || platform === '' || leagueId === '') {
         return;
     }
-    let standings = await espn.standings(leagueId, apiConfiguration);
+    let standings = await service.standings(leagueId, apiConfiguration);
     let reply = messenger.getStandings(standings);
     await say(reply);
 });
@@ -116,15 +141,18 @@ app.command('/schedule', async ({command, ack, say}) => {
         return;
     }
 
-    let leagueId = await servers.getLeagueFromServer(db, command.channel_id);
-    if (leagueId === null) {
-        await say('Please configure this bot using /config');
+    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    if (service === null || platform === '' || leagueId === '') {
         return;
     }
 
     // manual argument validation (two options: 'team' and 'week')
     if (options[0].toLowerCase() == 'team') {
-        let userSchedule = await espn.teamSchedule(leagueId, apiConfiguration, options[1]);
+        if (platform === 'sleeper') {
+            await say('Team schedules not supported yet for Sleeper leagues :(');
+            return;
+        }
+        let userSchedule = await service.teamSchedule(leagueId, options[1], apiConfiguration);
         if (userSchedule.length === 0) {
             await say('Invalid team!');
             return;
@@ -132,7 +160,7 @@ app.command('/schedule', async ({command, ack, say}) => {
         let reply = messenger.getTeamSchedule(userSchedule);
         await say(reply);
     } else if (options[0].toLowerCase() == 'week') {
-        let weekSchedule = await espn.weekSchedule(leagueId, apiConfiguration, options[1]);
+        let weekSchedule = await service.weekSchedule(leagueId, options[1], apiConfiguration);
         if (weekSchedule.length === 0) {
             await say('Invalid week!');
             return;

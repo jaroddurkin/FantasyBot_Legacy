@@ -62,13 +62,13 @@ module.exports = {
         let teamList = response['teams'];
         let league = new fantasy.League(id, response['settings'].name);
         for (var team of teamList) {
-            let newTeam = new fantasy.Team(team.id, team.location, team.nickname, team.abbrev);
+            let newTeam = new fantasy.Team(team.id, `${team.location} ${team.nickname}`, team.abbrev);
             league.addTeam(newTeam);
         }
         return league;
     },
 
-    roster: async function(id, config, team) {
+    roster: async function(id, team, config) {
         let response = await service.sendRequest(id, '?view=mRoster', config);
         let roster = [];
         for (let t of response.teams) {
@@ -99,7 +99,7 @@ module.exports = {
         let response = await service.sendRequest(id, '?view=mTeam', config);
         let teams = {};
         for (let t of response.teams) {
-            let team = new fantasy.Team(t.id, t.location, t.nickname, t.abbrev);
+            let team = new fantasy.Team(t.id, `${t.location} ${t.nickname}`, t.abbrev);
             let record = {};
             record['W'] = t['record']['overall']['wins'];
             record['L'] = t['record']['overall']['losses']
@@ -120,12 +120,12 @@ module.exports = {
         return teams;
     },
 
-    teamSchedule: async function(id, config, givenTeam) {
+    teamSchedule: async function(id, givenTeam, config) {
         let league = await this.leagueInfo(id, config);
         let teamId = -1;
         let teamMap = {};
         for (let team of league.teams) {
-            if (team.abbrev.toLowerCase() === givenTeam.toLowerCase()) {
+            if (team.nickname.toLowerCase() === givenTeam.toLowerCase()) {
                 teamId = team.id;
             }
             teamMap[team.id] = team;
@@ -134,6 +134,7 @@ module.exports = {
         let schedule = [];
         for (let matchup of response.schedule) {
             let userPoints, oppPoints, opponent;
+            let user = teamMap[teamId];
             let gameNumber = matchup['matchupPeriodId'];
             // games are not returned by a per team basis
             // the selected user could be either home or away so we check before assuming
@@ -148,27 +149,12 @@ module.exports = {
             } else {
                 continue;
             }
-            let game = {};
-            game['userPoints'] = userPoints;
-            game['oppPoints'] = oppPoints;
-            game['user'] = teamMap[teamId];
-            game['opponent'] = opponent;
-            game['gameNumber'] = gameNumber;
-            let gameResult;
-            if (userPoints > oppPoints) {
-                gameResult = 'W';
-            } else if (userPoints === oppPoints) {
-                gameResult = 'T';
-            } else {
-                gameResult = 'L';
-            }
-            game['gameResult'] = gameResult;
-            schedule.push(game);
+            schedule.push(new fantasy.Game(user, userPoints, opponent, oppPoints, gameNumber));
         }
         return schedule;
     },
 
-    weekSchedule: async function(id, config, week) {
+    weekSchedule: async function(id, week, config) {
         let league = await this.leagueInfo(id, config);
         let teamMap = {};
         for (let team of league.teams) {
@@ -180,20 +166,11 @@ module.exports = {
             if (matchup['matchupPeriodId'].toString() !== week) {
                 continue;
             }
-            let game = {};
-            game['homePoints'] = matchup['home']['totalPoints'];
-            game['awayPoints'] = matchup['away']['totalPoints'];
-            game['home'] = teamMap[matchup['home']['teamId']];
-            game['away'] = teamMap[matchup['away']['teamId']];
-            game['week'] = week;
-            if (game['homePoints'] > game['awayPoints']) {
-                game['winner'] = game['home'].abbrev;
-            } else if (game['homePoints'] == game['awayPoints']) {
-                game['winner'] = 'Tie';
-            } else {
-                game['winner'] = game['away'].abbrev;
-            }
-            schedule.push(game);
+            let homeTeam = teamMap[matchup['home']['teamId']];
+            let homePoints = matchup['home']['totalPoints'];
+            let awayTeam = teamMap[matchup['away']['teamId']];
+            let awayPoints = matchup['away']['totalPoints'];
+            schedule.push(new fantasy.Game(homeTeam, homePoints, awayTeam, awayPoints, week));
         }
         return schedule;
     }
