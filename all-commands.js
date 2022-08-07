@@ -13,6 +13,8 @@ module.exports = {
                 return option.setName('platform').setRequired(false).setDescription('Sleeper or ESPN');
             }).addStringOption(option => {
                 return option.setName('league').setRequired(false).setDescription('The league ID for the platform given.');
+            }).addStringOption(option => {
+                return option.setName('credential').setRequired(false).setDescription('Credential value for private leagues. See documentation.');
             }),
             new SlashCommandBuilder().setName('standings').setDescription('Gets the current standings for the league.'),
             new SlashCommandBuilder().setName('schedule').setDescription('Prints the schedule given your parameters.').addStringOption(option => {

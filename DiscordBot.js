@@ -14,11 +14,6 @@ if (!init_db.createTablesIfNotExist(db)) {
     process.exit(1);
 }
 
-// support for ESPN private leagues
-const apiConfiguration = {
-    cookie: process.env.COOKIE_VALUE ? process.env.COOKIE_VALUE : ""
-};
-
 client.on('ready', () => {
     console.log('Bot is ready!');
 });
@@ -44,12 +39,13 @@ client.on('interactionCreate', async interaction => {
         } else {
             let leagueId = interaction.options.get('league').value;
             let platform = interaction.options.get('platform').value.toLowerCase();
+            let cred = interaction.options.get('credential') ? interaction.options.get('credential').value : '';
             if (platform !== "espn" && platform !== "sleeper") {
                 await interaction.reply("Invalid platform!");
             }
             let exists = false;
             if (platform === "espn") {
-                exists = await espn.validateLeague(leagueId, apiConfiguration);
+                exists = await espn.validateLeague(leagueId, {cookie: cred});
             } else {
                 exists = await sleeper.validateLeague(leagueId);
             }
@@ -58,7 +54,7 @@ client.on('interactionCreate', async interaction => {
                 return;
             }
             await servers.deleteLeagueRelation(db, interaction.guildId);
-            let status = await servers.setConfigForServer(db, interaction.guildId, platform, leagueId);
+            let status = await servers.setConfigForServer(db, interaction.guildId, platform, leagueId, cred);
             if (!status) {
                 await interaction.reply('Server does not exist!');
             } else {
@@ -76,6 +72,7 @@ client.on('interactionCreate', async interaction => {
     }
     let leagueId = config.league;
     let platform = config.platform;
+    let credential = config.cred;
     
     // configure service up here so we dont have use too many conditionals
     let service = null;
@@ -86,7 +83,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName.toLowerCase() === 'league') {
-        let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
+        let leagueInfo = await service.leagueInfo(leagueId, {cookie: credential});
         let reply = messenger.getLeagueInfo(leagueInfo);
         await interaction.reply({ embeds: [reply] });
         return;
@@ -94,7 +91,7 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.commandName.toLowerCase() === 'roster') {
         let team = interaction.options.get('identifier').value;
-        let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
+        let leagueInfo = await service.leagueInfo(leagueId, {cookie: credential});
         let targetTeam = null;
 
         // check if team exists before continuing
@@ -108,14 +105,14 @@ client.on('interactionCreate', async interaction => {
             return;
         }
 
-        let roster = await service.roster(leagueId, targetTeam, apiConfiguration);
+        let roster = await service.roster(leagueId, targetTeam, {cookie: credential});
         let reply = messenger.getRoster(targetTeam, roster);
         await interaction.reply({ embeds: [reply] });
         return;
     }
 
     if (interaction.commandName.toLowerCase() === 'standings') {
-        let standings = await service.standings(leagueId, apiConfiguration);
+        let standings = await service.standings(leagueId, {cookie: credential});
         let reply = messenger.getStandings(standings);
         await interaction.reply({ embeds: [reply] });
         return;
@@ -130,7 +127,7 @@ client.on('interactionCreate', async interaction => {
                 await interaction.reply('Team schedules not supported yet for Sleeper leagues :(');
                 return;
             }
-            let userSchedule = await service.teamSchedule(leagueId, value, apiConfiguration);
+            let userSchedule = await service.teamSchedule(leagueId, value, {cookie: credential});
             if (userSchedule.length === 0) {
                 await interaction.reply('Invalid team!');
                 return;
@@ -138,7 +135,7 @@ client.on('interactionCreate', async interaction => {
             let reply = messenger.getTeamSchedule(userSchedule);
             await interaction.reply({ embeds: [reply] });
         } else if (option.toLowerCase() === 'week') {
-            let weekSchedule = await service.weekSchedule(leagueId, value, apiConfiguration);
+            let weekSchedule = await service.weekSchedule(leagueId, value, {cookie: credential});
             if (weekSchedule.length === 0) {
                 await interaction.reply('Invalid week!');
                 return;

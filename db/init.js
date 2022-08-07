@@ -1,7 +1,7 @@
 module.exports = {
 
     createTablesIfNotExist: async function(db) {
-        let res = await db.none('CREATE TABLE IF NOT EXISTS Servers(server text not null, platform text not null, league text not null);')
+        let res = await db.none('CREATE TABLE IF NOT EXISTS Servers(server text not null, platform text not null, league text not null, cred text);')
             .then(() => {
                 return true;
             })

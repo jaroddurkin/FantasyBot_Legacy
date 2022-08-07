@@ -13,11 +13,6 @@ if (!init_db.createTablesIfNotExist(db)) {
     process.exit(1);
 }
 
-// support for ESPN private leagues
-const apiConfiguration = {
-    cookie: process.env.COOKIE_VALUE ? process.env.COOKIE_VALUE : ""
-};
-
 const app = new App({
     token: process.env.SLACK_TOKEN,
     appToken: process.env.SLACK_APPTOKEN,
@@ -30,9 +25,9 @@ async function validateConfiguration(say, id) {
     console.log(config);
     if (config === null) {
         await say('Please configure this bot using /config');
-        return {service: null, platform: '', leagueId: ''};
+        return {service: null, platform: '', leagueId: '', cred: ''};
     } else {
-        return {service: config.platform === "espn" ? espn : sleeper, platform: config.platform, leagueId: config.league};
+        return {service: config.platform === "espn" ? espn : sleeper, platform: config.platform, leagueId: config.league, credential: config.cred};
     }
 }
 
@@ -58,13 +53,14 @@ app.command('/config', async ({command, ack, say}) => {
         }
         let platform = options[0].toLowerCase();
         let leagueId = options[1].toLowerCase();
+        let cred = options[2];
         if (platform !== "espn" && platform !== "sleeper") {
             await say('Invalid platform!');
             return;
         }
         let exists = false;
         if (platform === "espn") {
-            exists = await espn.validateLeague(leagueId, apiConfiguration);
+            exists = await espn.validateLeague(leagueId, {cookie: cred});
         } else {
             exists = await sleeper.validateLeague(leagueId);
         }
@@ -73,7 +69,7 @@ app.command('/config', async ({command, ack, say}) => {
             return;
         }
         await servers.deleteLeagueRelation(db, command.channel_id, leagueId);
-        let status = await servers.setConfigForServer(db, command.channel_id, platform, leagueId);
+        let status = await servers.setConfigForServer(db, command.channel_id, platform, leagueId, cred);
         if (!status) {
             await say('Server does not exist!');
         } else {
@@ -85,11 +81,11 @@ app.command('/config', async ({command, ack, say}) => {
 
 app.command('/league', async ({command, ack, say}) => {
     await ack();
-    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    let { service, platform, leagueId, credential } = await validateConfiguration(say, command.channel_id);
     if (service === null || platform === '' || leagueId === '') {
         return;
     }
-    let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
+    let leagueInfo = await service.leagueInfo(leagueId, {cookie: credential});
     let reply = messenger.getLeagueInfo(leagueInfo);
     await say(reply);
     return;
@@ -97,12 +93,12 @@ app.command('/league', async ({command, ack, say}) => {
 
 app.command('/roster', async ({command, ack, say}) => {
     await ack();
-    let { service, platform, leagueId } = await validateConfiguration(say, command.channel_id);
+    let { service, platform, leagueId, credential } = await validateConfiguration(say, command.channel_id);
     if (service === null || platform === '' || leagueId === '') {
         return;
     }
     let team = command.text;
-    let leagueInfo = await service.leagueInfo(leagueId, apiConfiguration);
+    let leagueInfo = await service.leagueInfo(leagueId, {cookie: credential});
 
     // check if team actually exists
     let targetTeam = null;
@@ -116,7 +112,7 @@ app.command('/roster', async ({command, ack, say}) => {
         return;
     }
 
-    let roster = await service.roster(leagueId, targetTeam, apiConfiguration);
+    let roster = await service.roster(leagueId, targetTeam, {cookie: credential});
     let reply = messenger.getRoster(targetTeam, roster);
     await say(reply);
     return;
@@ -128,7 +124,7 @@ app.command('/standings', async ({command, ack, say}) => {
     if (service === null || platform === '' || leagueId === '') {
         return;
     }
-    let standings = await service.standings(leagueId, apiConfiguration);
+    let standings = await service.standings(leagueId, {cookie: credential});
     let reply = messenger.getStandings(standings);
     await say(reply);
 });
@@ -152,7 +148,7 @@ app.command('/schedule', async ({command, ack, say}) => {
             await say('Team schedules not supported yet for Sleeper leagues :(');
             return;
         }
-        let userSchedule = await service.teamSchedule(leagueId, options[1], apiConfiguration);
+        let userSchedule = await service.teamSchedule(leagueId, options[1], {cookie: credential});
         if (userSchedule.length === 0) {
             await say('Invalid team!');
             return;
@@ -160,7 +156,7 @@ app.command('/schedule', async ({command, ack, say}) => {
         let reply = messenger.getTeamSchedule(userSchedule);
         await say(reply);
     } else if (options[0].toLowerCase() == 'week') {
-        let weekSchedule = await service.weekSchedule(leagueId, options[1], apiConfiguration);
+        let weekSchedule = await service.weekSchedule(leagueId, options[1], {cookie: credential});
         if (weekSchedule.length === 0) {
             await say('Invalid week!');
             return;
